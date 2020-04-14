@@ -552,15 +552,7 @@ class Setting {
 		switch ( $this->getType() ) {
 			case 'text':
 			default:
-				echo InputText::HTML( array(
-					'id'          => $this->getId(),
-					'input_attrs' => $this->getInputAttrs(),
-					'value'       => $current,
-					'help'        => $this->getHelp(),
-					'help_attrs'  => array(
-						'class' => 'description',
-					),
-				) );
+				echo InputText::HTML( $this->getFieldArguments( $current, 'input' ) );
 				break;
 		}
 	}
@@ -627,6 +619,33 @@ class Setting {
 	 */
 	protected function isEmpty( $data = null ) {
 		return empty( $data );
+	}
+
+	/**
+	 * @param mixed  $current
+	 * @param string $type
+	 *
+	 * @return array
+	 */
+	protected function getFieldArguments( $current, $type = 'input' ) {
+		switch ( $type ) {
+			case 'input':
+			default:
+				return array(
+					'id'          => $this->getId(),
+					'input_attrs' => wp_parse_args(
+						$this->getInputAttrs(),
+						array(
+							'class' => 'regular-text code',
+						)
+					),
+					'value'       => $current,
+					'help'        => $this->getHelp(),
+					'help_attrs'  => array(
+						'class' => 'description',
+					),
+				);
+		}
 	}
 
 	/**
