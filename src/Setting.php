@@ -281,6 +281,10 @@ class Setting {
 	 * @return string
 	 */
 	public function getDescription() {
+		if ( empty( $this->description ) ) {
+			$this->setDescription( $this->getLabel() );
+		}
+
 		return $this->description;
 	}
 
@@ -299,6 +303,10 @@ class Setting {
 	 * @return string
 	 */
 	public function getPage() {
+		if ( empty( $this->page ) ) {
+			$this->setPage( 'general' );
+		}
+
 		return $this->page;
 	}
 
@@ -317,6 +325,10 @@ class Setting {
 	 * @return string
 	 */
 	public function getSection() {
+		if ( empty( $this->section ) ) {
+			$this->setSection( 'default' );
+		}
+
 		return $this->section;
 	}
 
