@@ -4,7 +4,20 @@
 namespace SergeLiatko\WPSettings;
 
 use Exception;
+use SergeLiatko\FormFields\InputCheckbox;
+use SergeLiatko\FormFields\InputColor;
+use SergeLiatko\FormFields\InputDate;
+use SergeLiatko\FormFields\InputDateTimeLocal;
+use SergeLiatko\FormFields\InputEmail;
+use SergeLiatko\FormFields\InputHidden;
+use SergeLiatko\FormFields\InputNumber;
+use SergeLiatko\FormFields\InputPassword;
+use SergeLiatko\FormFields\InputRadio;
+use SergeLiatko\FormFields\InputRange;
+use SergeLiatko\FormFields\InputTel;
 use SergeLiatko\FormFields\InputText;
+use SergeLiatko\FormFields\InputUrl;
+use SergeLiatko\FormFields\Textarea;
 
 /**
  * Class Setting
@@ -562,9 +575,67 @@ class Setting {
 	public function display() {
 		$current = get_option( $this->getOption(), $this->getDefault() );
 		switch ( $this->getType() ) {
+			case 'textarea':
+				echo Textarea::HTML( $this->getFieldArguments( $current, array(
+					'rows'  => 10,
+					'cols'  => 50,
+					'class' => 'large-text code',
+				) ) );
+				break;
 			case 'text':
+				echo InputText::HTML( $this->getFieldArguments( $current, array(
+					'class' => 'regular-text code',
+				) ) );
+				break;
+			case 'checkbox':
+				echo InputCheckbox::HTML( $this->getFieldArguments( $current, array(
+					'value' => '1',
+				) ) );
+				break;
+			case 'number':
+				echo InputNumber::HTML( $this->getFieldArguments( $current, array(
+					'class' => 'small-text code',
+				) ) );
+				break;
+			case 'password':
+				echo InputPassword::HTML( $this->getFieldArguments( $current, array(
+					'class' => 'regular-text code',
+				) ) );
+				break;
+			case 'email':
+				echo InputEmail::HTML( $this->getFieldArguments( $current, array(
+					'class' => 'regular-text code',
+				) ) );
+				break;
+			case 'url':
+				echo InputUrl::HTML( $this->getFieldArguments( $current, array(
+					'class' => 'large-text code',
+				) ) );
+				break;
+			case 'tel':
+				echo InputTel::HTML( $this->getFieldArguments( $current, array(
+					'class' => 'regular-text code',
+				) ) );
+				break;
+			case 'radio':
+				echo InputRadio::HTML( $this->getFieldArguments( $current ) );
+				break;
+			case 'date':
+				echo InputDate::HTML( $this->getFieldArguments( $current ) );
+				break;
+			case 'date-time-local':
+				echo InputDateTimeLocal::HTML( $this->getFieldArguments( $current ) );
+				break;
+			case 'range':
+				echo InputRange::HTML( $this->getFieldArguments( $current ) );
+				break;
+			case 'color':
+				echo InputColor::HTML( $this->getFieldArguments( $current ) );
+				break;
+			case 'hidden':
+				echo InputHidden::HTML( $this->getFieldArguments( $current ) );
+				break;
 			default:
-				echo InputText::HTML( $this->getFieldArguments( $current, 'input' ) );
 				break;
 		}
 	}
@@ -634,30 +705,24 @@ class Setting {
 	}
 
 	/**
-	 * @param mixed  $current
-	 * @param string $type
+	 * @param mixed $current
+	 * @param array $input_attrs
 	 *
 	 * @return array
 	 */
-	protected function getFieldArguments( $current, $type = 'input' ) {
-		switch ( $type ) {
-			case 'input':
-			default:
-				return array(
-					'id'          => $this->getId(),
-					'input_attrs' => wp_parse_args(
-						$this->getInputAttrs(),
-						array(
-							'class' => 'regular-text code',
-						)
-					),
-					'value'       => $current,
-					'help'        => $this->getHelp(),
-					'help_attrs'  => array(
-						'class' => 'description',
-					),
-				);
-		}
+	protected function getFieldArguments( $current, $input_attrs = array() ) {
+		return array(
+			'id'          => $this->getId(),
+			'input_attrs' => wp_parse_args(
+				$this->getInputAttrs(),
+				$input_attrs
+			),
+			'value'       => $current,
+			'help'        => $this->getHelp(),
+			'help_attrs'  => array(
+				'class' => 'description',
+			),
+		);
 	}
 
 	/**
