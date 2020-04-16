@@ -9,6 +9,7 @@ use SergeLiatko\FormFields\InputColor;
 use SergeLiatko\FormFields\InputDate;
 use SergeLiatko\FormFields\InputDateTimeLocal;
 use SergeLiatko\FormFields\InputEmail;
+use SergeLiatko\FormFields\InputFile;
 use SergeLiatko\FormFields\InputHidden;
 use SergeLiatko\FormFields\InputNumber;
 use SergeLiatko\FormFields\InputPassword;
@@ -145,28 +146,7 @@ class Setting {
 		 * @var array      $choices
 		 */
 		extract(
-			$this->parse_args_recursive(
-				$args,
-				array(
-					'id'                => '',
-					'option'            => '',
-					'label'             => '',
-					'help'              => '',
-					'description'       => '',
-					'page'              => 'general',
-					'section'           => 'default',
-					'type'              => 'text',
-					'data_type'         => '',
-					'show_in_rest'      => false,
-					'sanitize_callback' => 'sanitize_text_field',
-					'display_callback'  => array( $this, 'display' ),
-					'display_args'      => array(),
-					'default'           => null,
-					'force_default'     => false,
-					'input_attrs'       => array(),
-					'choices'           => array(),
-				)
-			),
+			$this->parse_args_recursive( $args, $this->getDefaultParameters() ),
 			EXTR_OVERWRITE
 		);
 		// throw an exception if the $option is empty
@@ -570,6 +550,63 @@ class Setting {
 	}
 
 	/**
+	 * @param mixed $value
+	 *
+	 * @return mixed
+	 */
+	public function sanitize( $value ) {
+		switch ( $this->getDataType() ) {
+			case 'boolean':
+				// handle all strings but for "false" and "0" and not empty values as boolean true.
+				$value = is_string( $value ) ?
+					( in_array( strtolower( $value ), array( 'false', '0' ) ) ? false : true )
+					: ! empty( $value );
+				break;
+			case 'integer':
+				$value = intval( $value );
+				break;
+			case 'number':
+				$value = floatval( $value );
+				break;
+			case 'string':
+				switch ( $this->getType() ) {
+					case 'textarea':
+						$value = sanitize_textarea_field( $value );
+						break;
+					case 'email':
+						$value = sanitize_email( $value );
+						break;
+					case 'url':
+						$value = esc_url_raw( $value );
+						break;
+					case 'hidden':
+					case 'text':
+					case 'checkbox':
+					case 'radio':
+					case 'password':
+					case 'tel':
+					case 'color':
+					case 'date': #todo: separate sanitize
+					case 'date-time-local': #todo: separate sanitize
+					case 'number': #prefer data type parameter over type - sanitize as string value
+					case 'range': #prefer data type parameter over type - sanitize as string value
+					case 'select':
+					default:
+						$value = sanitize_text_field( $value );
+						break;
+				}
+				break;
+			//todo: implement sanitize for objects and arrays based on schema
+			default:
+				// sanitize as text field by default
+				$value = sanitize_text_field( $value );
+				break;
+		}
+
+		return $value;
+	}
+
+	/**
 	 * Displays setting field in WP UI.
 	 */
 	public function display() {
@@ -631,6 +668,9 @@ class Setting {
 				break;
 			case 'color':
 				echo InputColor::HTML( $this->getFieldArguments( $current ) );
+				break;
+			case 'file':
+				echo InputFile::HTML( $this->getFieldArguments( $current ) );
 				break;
 			case 'hidden':
 				echo InputHidden::HTML( $this->getFieldArguments( $current ) );
@@ -718,6 +758,7 @@ class Setting {
 				$input_attrs
 			),
 			'value'       => $current,
+			'choices'     => $this->getChoices(),
 			'help'        => $this->getHelp(),
 			'help_attrs'  => array(
 				'class' => 'description',
@@ -731,10 +772,23 @@ class Setting {
 	 * @return string
 	 */
 	protected function generateDataType() {
-		$data_types = $this->getDataTypesMap();
-		$type       = $this->getType();
+		switch ( $this->getType() ) {
+			case 'integer':
+			case 'range':
+				$type = 'integer';
+				break;
+			case 'number':
+				$type = 'number';
+				break;
+			case 'boolean':
+				$type = 'boolean';
+				break;
+			default:
+				$type = 'string';
+				break;
+		}
 
-		return isset( $data_types[ $type ] ) ? $data_types[ $type ] : 'string';
+		return $type;
 	}
 
 	/**
@@ -785,9 +839,25 @@ class Setting {
 	/**
 	 * @return array
 	 */
-	protected function getDataTypesMap() {
+	protected function getDefaultParameters() {
 		return array(
-			'text' => 'string',
+			'id'                => '',
+			'option'            => '',
+			'label'             => '',
+			'help'              => '',
+			'description'       => '',
+			'page'              => 'general',
+			'section'           => 'default',
+			'type'              => 'text',
+			'data_type'         => '',
+			'show_in_rest'      => false,
+			'sanitize_callback' => array( $this, 'sanitize' ),
+			'display_callback'  => array( $this, 'display' ),
+			'display_args'      => array(),
+			'default'           => null,
+			'force_default'     => false,
+			'input_attrs'       => array(),
+			'choices'           => array(),
 		);
 	}
 
