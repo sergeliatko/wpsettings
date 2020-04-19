@@ -18,6 +18,7 @@ use SergeLiatko\FormFields\InputRange;
 use SergeLiatko\FormFields\InputTel;
 use SergeLiatko\FormFields\InputText;
 use SergeLiatko\FormFields\InputUrl;
+use SergeLiatko\FormFields\Radios;
 use SergeLiatko\FormFields\Textarea;
 
 /**
@@ -624,19 +625,21 @@ class Setting {
 					'class' => 'regular-text code',
 				) ) );
 				break;
-			case 'checkbox':
+			case 'checkbox': #todo: handle multiple check boxes
 				echo InputCheckbox::HTML( $this->getFieldArguments( $current, array(
 					'value' => '1',
 				) ) );
 				break;
+			case 'radio': #todo: handle multiple radio buttons
+				if ( $this->isEmpty( $this->getChoices() ) ) {
+					echo InputRadio::HTML( $this->getFieldArguments( $current ) );
+				} else {
+					echo Radios::HTML( $this->getFieldArguments( $current ) );
+				}
+				break;
 			case 'number':
 				echo InputNumber::HTML( $this->getFieldArguments( $current, array(
 					'class' => 'small-text code',
-				) ) );
-				break;
-			case 'password':
-				echo InputPassword::HTML( $this->getFieldArguments( $current, array(
-					'class' => 'regular-text code',
 				) ) );
 				break;
 			case 'email':
@@ -649,25 +652,27 @@ class Setting {
 					'class' => 'large-text code',
 				) ) );
 				break;
-			case 'tel':
-				echo InputTel::HTML( $this->getFieldArguments( $current, array(
+			case 'password':
+				echo InputPassword::HTML( $this->getFieldArguments( $current, array(
 					'class' => 'regular-text code',
 				) ) );
-				break;
-			case 'radio':
-				echo InputRadio::HTML( $this->getFieldArguments( $current ) );
-				break;
-			case 'date':
-				echo InputDate::HTML( $this->getFieldArguments( $current ) );
-				break;
-			case 'date-time-local':
-				echo InputDateTimeLocal::HTML( $this->getFieldArguments( $current ) );
 				break;
 			case 'range':
 				echo InputRange::HTML( $this->getFieldArguments( $current ) );
 				break;
 			case 'color':
 				echo InputColor::HTML( $this->getFieldArguments( $current ) );
+				break;
+			case 'tel':
+				echo InputTel::HTML( $this->getFieldArguments( $current, array(
+					'class' => 'regular-text code',
+				) ) );
+				break;
+			case 'date':
+				echo InputDate::HTML( $this->getFieldArguments( $current ) );
+				break;
+			case 'date-time-local':
+				echo InputDateTimeLocal::HTML( $this->getFieldArguments( $current ) );
 				break;
 			case 'file':
 				echo InputFile::HTML( $this->getFieldArguments( $current ) );
