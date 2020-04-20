@@ -20,6 +20,7 @@ use SergeLiatko\FormFields\InputTel;
 use SergeLiatko\FormFields\InputText;
 use SergeLiatko\FormFields\InputUrl;
 use SergeLiatko\FormFields\Radios;
+use SergeLiatko\FormFields\Select;
 use SergeLiatko\FormFields\Textarea;
 
 /**
@@ -629,7 +630,7 @@ class Setting {
 					'class' => 'regular-text code',
 				) ) );
 				break;
-			case 'checkbox': #todo: handle multiple check boxes
+			case 'checkbox':
 				if ( $this->isEmpty( $this->getChoices() ) ) {
 					echo InputCheckbox::HTML( $this->getFieldArguments( $current, array(
 						'value' => '1',
@@ -644,6 +645,9 @@ class Setting {
 				} else {
 					echo Radios::HTML( $this->getFieldArguments( $current ) );
 				}
+				break;
+			case 'select':
+				echo Select::HTML( $this->getFieldArguments( $current ) );
 				break;
 			case 'number':
 				echo InputNumber::HTML( $this->getFieldArguments( $current, array(
@@ -797,8 +801,9 @@ class Setting {
 			case 'number':
 				$type = 'number';
 				break;
-			case 'boolean':
-				$type = 'boolean';
+			case 'select':
+				$input_attrs = $this->getInputAttrs();
+				$type        = isset( $input_attrs['multiple'] ) ? 'array' : 'string';
 				break;
 			default:
 				$type = 'string';
