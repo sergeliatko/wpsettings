@@ -4,6 +4,7 @@
 namespace SergeLiatko\WPSettings;
 
 use Exception;
+use SergeLiatko\FormFields\Checkboxes;
 use SergeLiatko\FormFields\InputCheckbox;
 use SergeLiatko\FormFields\InputColor;
 use SergeLiatko\FormFields\InputDate;
@@ -598,6 +599,9 @@ class Setting {
 				}
 				break;
 			//todo: implement sanitize for objects and arrays based on schema
+			case 'array':
+				$value = array_filter( (array) $value );
+				break;
 			default:
 				// sanitize as text field by default
 				$value = sanitize_text_field( $value );
@@ -626,11 +630,15 @@ class Setting {
 				) ) );
 				break;
 			case 'checkbox': #todo: handle multiple check boxes
-				echo InputCheckbox::HTML( $this->getFieldArguments( $current, array(
-					'value' => '1',
-				) ) );
+				if ( $this->isEmpty( $this->getChoices() ) ) {
+					echo InputCheckbox::HTML( $this->getFieldArguments( $current, array(
+						'value' => '1',
+					) ) );
+				} else {
+					echo Checkboxes::HTML( $this->getFieldArguments( $current ) );
+				}
 				break;
-			case 'radio': #todo: handle multiple radio buttons
+			case 'radio':
 				if ( $this->isEmpty( $this->getChoices() ) ) {
 					echo InputRadio::HTML( $this->getFieldArguments( $current ) );
 				} else {
@@ -777,7 +785,11 @@ class Setting {
 	 * @return string
 	 */
 	protected function generateDataType() {
+		//todo: check the data type from the show in rest parameter first
 		switch ( $this->getType() ) {
+			case 'checkbox':
+				$type = $this->isEmpty( $this->getChoices() ) ? 'string' : 'array';
+				break;
 			case 'integer':
 			case 'range':
 				$type = 'integer';
