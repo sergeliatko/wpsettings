@@ -22,6 +22,7 @@ use SergeLiatko\FormFields\InputUrl;
 use SergeLiatko\FormFields\Radios;
 use SergeLiatko\FormFields\Select;
 use SergeLiatko\FormFields\Textarea;
+use SergeLiatko\WPSettings\Interfaces\AdminItemInterface;
 use SergeLiatko\WPSettings\Traits\IsEmpty;
 
 /**
@@ -29,7 +30,7 @@ use SergeLiatko\WPSettings\Traits\IsEmpty;
  *
  * @package SergeLiatko\WPSettings
  */
-class Setting {
+class Setting implements AdminItemInterface {
 
 	use IsEmpty;
 
@@ -193,6 +194,15 @@ class Setting {
 				add_filter( "option_{$this->getOption()}", array( $this, 'forceDefault' ), 10, 1 );
 			}
 		}
+	}
+
+	/**
+	 * @param array $params
+	 *
+	 * @return object|\SergeLiatko\WPSettings\Interfaces\AdminItemInterface
+	 */
+	public static function createInstance( array $params ) {
+		return Factory::createItem( $params, __CLASS__ );
 	}
 
 	/**

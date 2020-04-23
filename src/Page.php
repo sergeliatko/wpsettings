@@ -3,6 +3,8 @@
 
 namespace SergeLiatko\WPSettings;
 
+use SergeLiatko\WPSettings\Interfaces\AdminItemInterface;
+use SergeLiatko\WPSettings\Traits\AdminItemHandler;
 use SergeLiatko\WPSettings\Traits\IsEmpty;
 
 /**
@@ -10,9 +12,9 @@ use SergeLiatko\WPSettings\Traits\IsEmpty;
  *
  * @package SergeLiatko\WPSettings
  */
-class Page {
+class Page implements AdminItemInterface {
 
-	use IsEmpty;
+	use AdminItemHandler, IsEmpty;
 
 	/**
 	 * Hook suffix returned by add_menu_page() or add_submenu_page() upon registration in WordPress UI.
@@ -167,6 +169,16 @@ class Page {
 		add_action( 'admin_menu', array( $this, 'register' ), 10, 0 );
 		$this->setSections( $sections );
 	}
+
+	/**
+	 * @param array $params
+	 *
+	 * @return object|\SergeLiatko\WPSettings\Interfaces\AdminItemInterface
+	 */
+	public static function createInstance( array $params ) {
+		return Factory::createItem( $params, __CLASS__ );
+	}
+
 
 	/**
 	 * @return string
@@ -382,28 +394,23 @@ class Page {
 	 * @param array[] $sections
 	 *
 	 * @return Page
-	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function setSections( array $sections = array() ) {
-		//filter sections
-		$sections = array_filter( $sections, function ( $item ) {
-			return ! empty( $item ) && is_array( $item );
-		} );
-		//instantiate sections
-		array_walk( $sections, function ( &$item, $key, $defaults ) {
-			$item = new Section( wp_parse_args( $item, $defaults ) );
-		}, array( 'page' => $this->getSlug() ) );
-		//store instantiated sections in array( Section ID => Section )
-		$new_sections = array();
-		foreach ( $sections as $section ) {
-			if ( $section instanceof Section ) {
-				$new_sections[ $section->getId() ] = $section;
-			}
-		}
-		//set sections
-		$this->sections = $new_sections;
+		$this->sections = $this->instantiateItems(
+			$sections,
+			'\\SergeLiatko\\WPSettings\\Section',
+			array( 'page' => $this->getSlug() )
+		);
 
 		return $this;
+	}
+
+	/**
+	 * @return string
+	 * @noinspection PhpUnused
+	 */
+	public function getId() {
+		return $this->getSlug();
 	}
 
 	/**

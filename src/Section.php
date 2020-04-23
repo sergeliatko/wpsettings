@@ -3,6 +3,8 @@
 
 namespace SergeLiatko\WPSettings;
 
+use SergeLiatko\WPSettings\Interfaces\AdminItemInterface;
+use SergeLiatko\WPSettings\Traits\AdminItemHandler;
 use SergeLiatko\WPSettings\Traits\IsEmpty;
 
 /**
@@ -10,9 +12,9 @@ use SergeLiatko\WPSettings\Traits\IsEmpty;
  *
  * @package SergeLiatko\WPSettings
  */
-class Section {
+class Section implements AdminItemInterface {
 
-	use IsEmpty;
+	use AdminItemHandler, IsEmpty;
 
 	/**
 	 * @var string $id Section ID. Optional, defaults to 'default'.
@@ -74,6 +76,14 @@ class Section {
 		$this->setSettings( $settings );
 	}
 
+	/**
+	 * @param array $params
+	 *
+	 * @return object|\SergeLiatko\WPSettings\Interfaces\AdminItemInterface
+	 */
+	public static function createInstance( array $params ) {
+		return Factory::createItem( $params, __CLASS__ );
+	}
 
 	/**
 	 * @return string
@@ -190,33 +200,16 @@ class Section {
 	 * @param array[] $settings
 	 *
 	 * @return Section
-	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function setSettings( array $settings = array() ) {
-		//filter settings
-		$settings = array_filter( $settings, function ( $item ) {
-			return ! empty( $item ) && is_array( $item );
-		} );
-		//instantiate settings
-		array_walk(
+		$this->settings = $this->instantiateItems(
 			$settings,
-			function ( &$item, $key, $defaults ) {
-				$item = new Setting( wp_parse_args( $item, $defaults ) );
-			},
+			'\\SergeLiatko\\WPSettings\\Setting',
 			array(
 				'page'    => $this->getPage(),
 				'section' => $this->getId(),
 			)
 		);
-		//store instantiated settings in an array( Setting ID => Setting Instance )
-		$new_settings = array();
-		foreach ( $settings as $setting ) {
-			if ( $setting instanceof Setting ) {
-				$new_settings[ $setting->getId() ] = $setting;
-			}
-		}
-		//set settings
-		$this->settings = $new_settings;
 
 		return $this;
 	}
