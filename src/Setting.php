@@ -22,6 +22,7 @@ use SergeLiatko\FormFields\InputUrl;
 use SergeLiatko\FormFields\Radios;
 use SergeLiatko\FormFields\Select;
 use SergeLiatko\FormFields\Textarea;
+use SergeLiatko\WPSettings\Traits\IsEmpty;
 
 /**
  * Class Setting
@@ -29,6 +30,8 @@ use SergeLiatko\FormFields\Textarea;
  * @package SergeLiatko\WPSettings
  */
 class Setting {
+
+	use IsEmpty;
 
 	/**
 	 * @var string $id Setting field id (Optional, if empty, will be generated from $option).
@@ -750,15 +753,6 @@ class Setting {
 				'show_in_rest'      => $this->getShowInRest(),
 			)
 		);
-	}
-
-	/**
-	 * @param mixed $data
-	 *
-	 * @return bool
-	 */
-	protected function isEmpty( $data = null ) {
-		return empty( $data );
 	}
 
 	/**

@@ -3,12 +3,16 @@
 
 namespace SergeLiatko\WPSettings;
 
+use SergeLiatko\WPSettings\Traits\IsEmpty;
+
 /**
  * Class Page
  *
  * @package SergeLiatko\WPSettings
  */
 class Page {
+
+	use IsEmpty;
 
 	/**
 	 * Hook suffix returned by add_menu_page() or add_submenu_page() upon registration in WordPress UI.
@@ -472,12 +476,4 @@ class Page {
 		);
 	}
 
-	/**
-	 * @param mixed $data
-	 *
-	 * @return bool
-	 */
-	protected function isEmpty( $data = null ) {
-		return empty( $data );
-	}
 }

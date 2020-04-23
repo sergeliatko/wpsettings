@@ -3,12 +3,16 @@
 
 namespace SergeLiatko\WPSettings;
 
+use SergeLiatko\WPSettings\Traits\IsEmpty;
+
 /**
  * Class Section
  *
  * @package SergeLiatko\WPSettings
  */
 class Section {
+
+	use IsEmpty;
 
 	/**
 	 * @var string $id Section ID. Optional, defaults to 'default'.
@@ -254,12 +258,4 @@ class Section {
 		);
 	}
 
-	/**
-	 * @param mixed $data
-	 *
-	 * @return bool
-	 */
-	protected function isEmpty( $data = null ) {
-		return empty( $data );
-	}
 }
