@@ -187,9 +187,14 @@ class Setting implements AdminItemInterface {
 		add_action( 'admin_menu', array( $this, 'addSettingField' ), 10, 0 );
 		// handle default value
 		if ( ! is_null( $this->getDefault() ) ) {
+			//make sure the default option value is not saved to database (default value is defined in the source code)
+			add_action( "update_option_{$this->getOption()}", array( $this, 'doNotUpdateDefault' ), 10, 2 );
+			add_action( "add_option_{$this->getOption()}", array( $this, 'doNotAddDefault' ), 10, 2 );
+			//make sure the default value is also provided on the front end
 			if ( ! is_admin() ) {
 				add_filter( "default_option_{$this->getOption()}", array( $this, 'filterDefaultOption' ), 10, 3 );
 			}
+			//make sure the default value is returned if the option value is empty and $force_default is true
 			if ( $this->isForceDefault() ) {
 				add_filter( "option_{$this->getOption()}", array( $this, 'forceDefault' ), 10, 1 );
 			}
@@ -763,6 +768,30 @@ class Setting implements AdminItemInterface {
 				'show_in_rest'      => $this->getShowInRest(),
 			)
 		);
+	}
+
+	/**
+	 * @param mixed $old_value
+	 * @param mixed $new_value
+	 *
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function doNotUpdateDefault( $old_value, $new_value ) {
+		if ( $this->getDefault() == $new_value ) {
+			delete_option( $this->getOption() );
+		}
+	}
+
+	/**
+	 * @param string $option
+	 * @param mixed  $new_value
+	 *
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function doNotAddDefault( $option, $new_value ) {
+		if ( $this->getDefault() == $new_value ) {
+			delete_option( $this->getOption() );
+		}
 	}
 
 	/**
