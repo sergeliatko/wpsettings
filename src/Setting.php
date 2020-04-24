@@ -830,6 +830,7 @@ class Setting implements AdminItemInterface {
 	 * @param bool         $preserve_integer_keys
 	 *
 	 * @return array|object
+	 * @noinspection DuplicatedCode
 	 */
 	protected function parse_args_recursive( $args, $default, $preserve_integer_keys = false ) {
 		if ( ! is_array( $default ) && ! is_object( $default ) ) {
