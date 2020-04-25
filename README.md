@@ -1,5 +1,7 @@
 # WPSettings
 ## WordPress Settings API Framework
+[![Total Downloads](https://img.shields.io/packagist/dt/sergeliatko/wpsettings.svg)](https://packagist.org/packages/sergeliatko/wpsettings)
+[![Latest Stable Version](https://img.shields.io/packagist/v/sergeliatko/wpsettings.svg)](https://packagist.org/packages/sergeliatko/wpsettings)
 
 This PHP package helps you to speed up the development of your settings screens in WordPress admin. The framework allows you to easily add options, settings sections and admin pages to WordPress admin, taking care to register, sanitize, properly add and display your settings accordingly WordPress Settings API and best coding standards.
 
@@ -9,7 +11,7 @@ WPSettings farmework is intended to help plugin and theme developers who need to
 
 Certainly, many may say it is an overkill to use a framework that helps your interact with WordPress Settings API, plus it is not secure to rely on the code you do not control internally...
 
-Well, after more than 10 years beiing DEEP in WordPress admin interfaces (I mean advanced interfaces that always looked like native to WordPress) - **I ended up coding this framework for me first of all**. It is something I use in all of my projects, simply because it saves me tons of time and head ache.
+Well, after more than 10 years being DEEP in WordPress admin interfaces (I mean advanced interfaces that always looked like native to WordPress) - **I ended up coding this framework for me first of all**. It is something I use in all of my projects, simply because it saves me tons of time and head ache.
 
 As for the second part: the library is open source, you may always fork it on GitHub, customize to your guize and evenually make a pull request to benefit the others. Even if I dissapear for any reason, the code will stay here available to all of us. And if you want to [suggest features](https://github.com/sergeliatko/wpsettings/issues) or [take part in feature votes or simply support the project](https://www.patreon.com/sergeliatko), you're always welcome.
 
@@ -98,5 +100,15 @@ WPSettings Framework takes care of:
 
 And it allows you to rewrite any functionality of the main classes providing your own extensions.
 
+## Documentaion is coming...
 
+The code source has extensive comments and parameters descriptions, but it would be really helpful of you to contribute to the project documentation via README.md file edits and [posting to issues](https://github.com/sergeliatko/wpsettings/issues).
+
+## Support WPSettings Financially
+
+Get supported WPSettings and help fund the project with the [Patreon Subscription](https://www.patreon.com/sergeliatko). Currently the funds are used to cover the documentation expenses.
+
+## Submitting bugs and feature requests
+
+Bugs and feature request are tracked on [GitHub](https://github.com/sergeliatko/wpsettings/issues)
 
