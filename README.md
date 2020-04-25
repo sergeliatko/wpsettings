@@ -100,7 +100,7 @@ WPSettings Framework takes care of:
 
 And it allows you to rewrite any functionality of the main classes providing your own extensions.
 
-## Documentaion is coming...
+## Documentation is coming...
 
 The code source has extensive comments and parameters descriptions, but it would be really helpful of you to contribute to the project documentation via README.md file edits and [posting to issues](https://github.com/sergeliatko/wpsettings/issues).
 
