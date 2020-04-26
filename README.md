@@ -1,10 +1,8 @@
 # WPSettings
 ## WordPress Settings API Framework
-
 This PHP package helps you to speed up the development of your settings screens in WordPress admin. The framework allows you to easily add options, settings sections and admin pages to WordPress admin, taking care to register, sanitize, properly add and display your settings accordingly WordPress Settings API and best coding standards.
 
 ## Who it is useful for
-
 WPSettings farmework is intended to help plugin and theme developers who need to quickly create consistent admin interfaces in WordPress no matter how small or big their projects are. It is especially usefull for developers who use WordPress as a "spare wheel" and are not very experienced with WordPress specifics and proprietary logic.
 
 Certainly, many may say it is an overkill to use a framework that helps your interact with WordPress Settings API, plus it is not secure to rely on the code you do not control internally...
@@ -14,9 +12,7 @@ Well, after more than 10 years being DEEP in WordPress admin interfaces that alw
 As for the second part: the library is open source, you may always fork it on GitHub, customize to your guize and evenually make a pull request to benefit the others. The code will stay public available to all of us. And if you want to [suggest features](https://github.com/sergeliatko/wpsettings/issues) or [take part in feature votes or simply support the project](https://www.patreon.com/sergeliatko), you're always welcome.
 
 ## How it works
-
 ### WPSettings Framework
-
 With WPSettings Framework adding a simple text field to General Settings in WordPress admin and all the code that sanitizes the option value in the database can be reduced to following:
 
 + one line to load the library in your project main file:
@@ -39,7 +35,6 @@ $my_option = new Setting( array(
 ...and that's it. Seriously, that's all the code needed to make it happen.
 
 ### WordPress Settings API
-
 Now count the lines of PHP necessary to get the same (cleanly registered and properly sanitized) result for the same option using the standard WordPress Settings API:
 
 ```php
@@ -79,7 +74,6 @@ add_action( 'admin_menu', function () {
 **6 lines** with WPSettings framework vs **30 lines** using WordPress Settings API... sure if you add more options - not all of them will take 30 lines, but still it is 5 times faster in code and skips you hell of a job to learn the WordPress Settings API hiden stones.
 
 ## The best part
-
 WPSettings Framework takes care of:
 
 * Adding single or multiple admin pages and/or submenu pages as well as their introductory texts to WordPress admin area
@@ -99,15 +93,12 @@ WPSettings Framework takes care of:
 And it allows you to rewrite any functionality of the main classes providing your own extensions.
 
 ## Documentation is coming...
-
 The code source has extensive comments and parameters descriptions, but it would be really helpful of you to contribute to the project documentation via README.md file edits and [posting to issues](https://github.com/sergeliatko/wpsettings/issues).
 
 ## Support WPSettings Financially
-
 Get WPSettings supported and help fund the project with the [Patreon Subscription](https://www.patreon.com/sergeliatko). As of today, all the funds collected will be used to cover the expenses of project documentation.
 
 ## About
-
 ### Requirements
 * [PHP](https://www.php.net/) >= 5.6.0
 * [WordPress](https://wordpress.org/) >= 4.7
@@ -117,7 +108,7 @@ Get WPSettings supported and help fund the project with the [Patreon Subscriptio
 Please submit your questions and requests in [GitHub Issues](https://github.com/sergeliatko/wpsettings/issues).
 
 ### Licence
-WPSettings is licenced under [GPL-3.0](https://github.com/sergeliatko/wpsettings/blob/master/LICENSE) licence.
+WPSettings is licenced under GPL-3.0 licence. See [LICENCE](https://github.com/sergeliatko/wpsettings/blob/master/LICENSE) file for details.
 
 ### Author
 Serge Liatko - <contact@sergeliatko.com> - <https://sergeliatko.com>
