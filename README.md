@@ -92,6 +92,58 @@ WPSettings Framework takes care of:
 
 And it allows you to rewrite any functionality of the main classes providing your own extensions.
 
+## Installation
+
+### Using composer
+Install the latest version of the framework with:
+
+```bash
+$ composer require sergeliatko/wpsettings
+```
+
+### Using git
+Install the latest verions of the framework with:
+
+```bash
+$ git clone https://github.com/sergeliatko/wpsettings
+```
+
+Install all the required libraries:
+
+```bash
+$ git clone https://github.com/sergeliatko/form-fields
+```
+```bash
+$ git clone https://github.com/sergeliatko/html
+```
+
+### Manually
+Download zip files for all necessary libraries:
+
+* [WPSettings](https://github.com/sergeliatko/wpsettings)
+* [FormFields](https://github.com/sergeliatko/form-fields)
+* [HTML](https://github.com/sergeliatko/html)
+
+And extract them in your project ressources folder.
+
+## Loading the framework classes
+
+### Using composer
+Composer will load the framework automatically.
+
+### Manually
+If loading the classes manually (after manual installation or after installation with git), make sure the autoload.php files in all 3 libraries are included in your project:
+
+```php
+<?php
+//...
+//Load WPSettings Framework
+require_once ( dirname(__FILE__) . '/path_to/wpsettings/autoload.php' );
+require_once ( dirname(__FILE__) . '/path_to/form-fields/autoload.php' );
+require_once ( dirname(__FILE__) . '/path_to/html/autoload.php' );
+//...
+```
+
 ## Documentation is coming...
 The code source has extensive comments and parameters descriptions, but it would be really helpful of you to contribute to the project documentation via README.md file edits and [posting to issues](https://github.com/sergeliatko/wpsettings/issues).
 
