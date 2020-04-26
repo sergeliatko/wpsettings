@@ -1,7 +1,5 @@
 # WPSettings
 ## WordPress Settings API Framework
-[![Total Downloads](https://img.shields.io/packagist/dt/sergeliatko/wpsettings.svg)](https://packagist.org/packages/sergeliatko/wpsettings)
-[![Latest Stable Version](https://img.shields.io/packagist/v/sergeliatko/wpsettings.svg)](https://packagist.org/packages/sergeliatko/wpsettings)
 
 This PHP package helps you to speed up the development of your settings screens in WordPress admin. The framework allows you to easily add options, settings sections and admin pages to WordPress admin, taking care to register, sanitize, properly add and display your settings accordingly WordPress Settings API and best coding standards.
 
@@ -11,9 +9,9 @@ WPSettings farmework is intended to help plugin and theme developers who need to
 
 Certainly, many may say it is an overkill to use a framework that helps your interact with WordPress Settings API, plus it is not secure to rely on the code you do not control internally...
 
-Well, after more than 10 years being DEEP in WordPress admin interfaces (I mean advanced interfaces that always looked like native to WordPress) - **I ended up coding this framework for me first of all**. It is something I use in all of my projects, simply because it saves me tons of time and head ache.
+Well, after more than 10 years being DEEP in WordPress admin interfaces that always looked like native to WordPress - **I ended up coding this framework for me first of all**. It is something I use in all of my projects, simply because it saves me tons of time and head ache.
 
-As for the second part: the library is open source, you may always fork it on GitHub, customize to your guize and evenually make a pull request to benefit the others. Even if I dissapear for any reason, the code will stay here available to all of us. And if you want to [suggest features](https://github.com/sergeliatko/wpsettings/issues) or [take part in feature votes or simply support the project](https://www.patreon.com/sergeliatko), you're always welcome.
+As for the second part: the library is open source, you may always fork it on GitHub, customize to your guize and evenually make a pull request to benefit the others. The code will stay public available to all of us. And if you want to [suggest features](https://github.com/sergeliatko/wpsettings/issues) or [take part in feature votes or simply support the project](https://www.patreon.com/sergeliatko), you're always welcome.
 
 ## How it works
 
@@ -38,7 +36,7 @@ $my_option = new Setting( array(
 ) );
 ```
 
-...and that's it. Seriously, that's all the code needed.
+...and that's it. Seriously, that's all the code needed to make it happen.
 
 ### WordPress Settings API
 
@@ -106,9 +104,25 @@ The code source has extensive comments and parameters descriptions, but it would
 
 ## Support WPSettings Financially
 
-Get supported WPSettings and help fund the project with the [Patreon Subscription](https://www.patreon.com/sergeliatko). Currently the funds are used to cover the documentation expenses.
+Get WPSettings supported and help fund the project with the [Patreon Subscription](https://www.patreon.com/sergeliatko). As of today, all the funds collected will be used to cover the expenses of project documentation.
 
-## Submitting bugs and feature requests
+## About
 
-Bugs and feature request are tracked on [GitHub](https://github.com/sergeliatko/wpsettings/issues)
+### Requirements
+* [PHP](https://www.php.net/) >= 5.6.0
+* [WordPress](https://wordpress.org/) >= 4.7
+* [sergeliatko/form-fields](https://github.com/sergeliatko/form-fields) >= 0.0.1
 
+### Feature requests, Questions, Support and Bug Reports
+Please submit your questions and requests in [GitHub Issues](https://github.com/sergeliatko/wpsettings/issues).
+
+### Licence
+WPSettings is licenced under [GPL-3.0](https://github.com/sergeliatko/wpsettings/blob/master/LICENSE) licence.
+
+### Author
+Serge Liatko - <contact@sergeliatko.com> - <https://sergeliatko.com>
+
+### Build with
+* [PHPStorm](https://www.jetbrains.com/phpstorm/)
+* [Wampserver](http://wampserver.aviatechno.net/)
+* [WordPress](https://wordpress.org)
