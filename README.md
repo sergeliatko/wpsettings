@@ -230,6 +230,9 @@ Please see src/Page.php for details and accepted parameters.
 ### Extending the core functionality
 Following classes may be extended: Setting, Section, Page. To do so, extend the class with your code and add **_class** key with your extension class fully qualified name as value to the parameters array. For details see src/Factory.php
 
+### Getting option value from database
+Please use [get_option()](https://developer.wordpress.org/reference/functions/get_option/) to get option value from the database.
+
 ## Documentation is coming...
 The code source has extensive comments and parameters descriptions, but it would be really helpful of you to contribute to the project documentation via README.md file edits and [posting to issues](https://github.com/sergeliatko/wpsettings/issues).
 
