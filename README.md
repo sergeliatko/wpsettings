@@ -144,6 +144,92 @@ require_once ( dirname(__FILE__) . '/path_to/html/autoload.php' );
 //...
 ```
 
+## Basic usage
+
+### Adding a setting
+```php
+<?php
+//...
+//make use of the Setting class once in your file
+use \SergeLiatko\WPSettings\Setting;
+
+//...
+
+//then create setting like this
+$my_option = new Setting( array(
+	'option' => 'option_name_in_db',
+	'label'  => __( 'My option label', 'my-text-domain' )
+) );
+//...
+```
+Please see src/Setting.php for details and accepted parameters.
+
+### Adding a settings section
+```php
+<?php
+//...
+//make use of the Section class once in your file
+use SergeLiatko\WPSettings\Section;
+
+//...
+
+//then create settings section like this
+$my_section = new Section( array(
+	'id'          => 'custom-section-id',
+	'title'       => __( 'My section title', 'my-text-domain' ),
+	'description' => __( 'This is section description text that appears above setting fields.', 'my-text-domain' ),
+	'settings'    => array(
+		array(
+			'option' => 'option_1_name_in_db',
+			'label'  => __( 'My option 1 label', 'my-text-domain' ),
+		),
+		array(
+			'option' => 'option_2_name_in_db',
+			'label'  => __( 'My option 2 label', 'my-text-domain' ),
+		),
+	),
+) );
+//...
+```
+Please see src/Section.php for details and accepted parameters.
+
+### Adding admin page
+```php
+<?php
+//...
+//make use of the Setting class once in your file
+use SergeLiatko\WPSettings\Page;
+
+//...
+//then create admin page like this
+$my_section = new Page( array(
+	'slug'     => 'my-admin-page',
+	'label'    => __( 'My Admin Page', 'my-text-domain' ),
+	'sections' => array(
+		array(
+			'id'          => 'default',
+			'title'       => __( 'My section title', 'my-text-domain' ),
+			'description' => __( 'In this section my setting fields will appear', 'my-text-domain' ),
+			'settings'    => array(
+				array(
+					'option' => 'option_1_name_in_db',
+					'label'  => __( 'My option 1 label', 'my-text-domain' ),
+				),
+				array(
+					'option' => 'option_2_name_in_db',
+					'label'  => __( 'My option 2 label', 'my-text-domain' ),
+				),
+			),
+		),
+	),
+) );
+//...
+```
+Please see src/Page.php for details and accepted parameters.
+
+### Extending the core functionality
+Following classes may be extended: Setting, Section, Page. To do so, extend the class with your code and add **_class** key with your extension class fully qualified name as value to the parameters array. For details see src/Factory.php
+
 ## Documentation is coming...
 The code source has extensive comments and parameters descriptions, but it would be really helpful of you to contribute to the project documentation via README.md file edits and [posting to issues](https://github.com/sergeliatko/wpsettings/issues).
 
@@ -155,6 +241,7 @@ Get WPSettings supported and help fund the project with the [Patreon Subscriptio
 * [PHP](https://www.php.net/) >= 5.6.0
 * [WordPress](https://wordpress.org/) >= 4.7
 * [sergeliatko/form-fields](https://github.com/sergeliatko/form-fields) >= 0.0.1
+* [sergeliatko/html](https://github.com/sergeliatko/html) >= 0.0.1 (indirectly required by [sergeliatko/form-fields](https://github.com/sergeliatko/form-fields))
 
 ### Feature requests, Questions, Support and Bug Reports
 Please submit your questions and requests in [GitHub Issues](https://github.com/sergeliatko/wpsettings/issues).
