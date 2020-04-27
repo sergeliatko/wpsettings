@@ -3,7 +3,7 @@
 This PHP package helps you to speed up the development of your settings screens in WordPress admin. The framework allows you to easily add options, settings sections and admin pages to WordPress admin, taking care to register, sanitize, properly add and display your settings accordingly WordPress Settings API and best coding standards.
 
 ## Who it is useful for
-WPSettings farmework is intended to help plugin and theme developers who need to quickly create consistent admin interfaces in WordPress no matter how small or big their projects are. It is especially usefull for developers who use WordPress as a "spare wheel" and are not very experienced with WordPress specifics and proprietary logic.
+WPSettings framework is intended to help plugin and theme developers who need to quickly create consistent admin interfaces in WordPress no matter how small or big their projects are. It is especially usefull for developers who use WordPress as a "spare wheel" and are not very experienced with WordPress specifics and proprietary logic.
 
 Certainly, many may say it is an overkill to use a framework that helps your interact with WordPress Settings API, plus it is not secure to rely on the code you do not control internally...
 
@@ -254,7 +254,7 @@ To do so, extend the class with your code and add **_class** key with your exten
 
 ```php
 $my_option = Setting::createInstance( array(
-	'_class' => '\\MyNameSpace\\MySettingExtension'
+	'_class' => '\\MyNameSpace\\MySettingExtension',
 	'option' => 'option_name_in_db',
 	'label'  => __( 'My option label', 'my-text-domain' )
 ) );
