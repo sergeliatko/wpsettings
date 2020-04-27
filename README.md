@@ -172,13 +172,13 @@ use \SergeLiatko\WPSettings\Setting;
 //...
 
 //then create setting like this
-$my_option = new Setting( array(
+$my_option = Setting::createInstance( array(
 	'option' => 'option_name_in_db',
 	'label'  => __( 'My option label', 'my-text-domain' )
 ) );
 //...
 ```
-Please see src/Setting.php for details and accepted parameters.
+Please see [src/Setting.php](https://github.com/sergeliatko/wpsettings/blob/master/src/Setting.php) for additional details and accepted parameters.
 
 ### Adding a settings section
 ```php
@@ -190,7 +190,7 @@ use SergeLiatko\WPSettings\Section;
 //...
 
 //then create settings section like this
-$my_section = new Section( array(
+$my_section = Section::createInstance( array(
 	'id'          => 'custom-section-id',
 	'title'       => __( 'My section title', 'my-text-domain' ),
 	'description' => __( 'This is section description text that appears above setting fields.', 'my-text-domain' ),
@@ -207,7 +207,7 @@ $my_section = new Section( array(
 ) );
 //...
 ```
-Please see src/Section.php for details and accepted parameters.
+Please see [src/Section.php](https://github.com/sergeliatko/wpsettings/blob/master/src/Section.php) for additional details and accepted parameters.
 
 ### Adding admin page
 ```php
@@ -218,7 +218,7 @@ use SergeLiatko\WPSettings\Page;
 
 //...
 //then create admin page like this
-$my_section = new Page( array(
+$my_section = Page::createInstance( array(
 	'slug'     => 'my-admin-page',
 	'label'    => __( 'My Admin Page', 'my-text-domain' ),
 	'sections' => array(
@@ -241,10 +241,16 @@ $my_section = new Page( array(
 ) );
 //...
 ```
-Please see src/Page.php for details and accepted parameters.
+Please see [src/Page.php](https://github.com/sergeliatko/wpsettings/blob/master/src/Page.php) for additional details and accepted parameters.
 
 ### Extending the core functionality
-Following classes may be extended: Setting, Section, Page. To do so, extend the class with your code and add **_class** key with your extension class fully qualified name as value to the parameters array.
+Following classes may be extended: 
+
+* [Setting](https://github.com/sergeliatko/wpsettings/blob/master/src/Setting.php)
+* [Section](https://github.com/sergeliatko/wpsettings/blob/master/src/Section.php)
+* [Page](https://github.com/sergeliatko/wpsettings/blob/master/src/Page.php)
+
+To do so, extend the class with your code and add **_class** key with your extension class fully qualified name as value to the parameters array.
 
 ```php
 $my_option = Setting::createInstance( array(
