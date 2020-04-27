@@ -244,7 +244,17 @@ $my_section = new Page( array(
 Please see src/Page.php for details and accepted parameters.
 
 ### Extending the core functionality
-Following classes may be extended: Setting, Section, Page. To do so, extend the class with your code and add **_class** key with your extension class fully qualified name as value to the parameters array. For details see src/Factory.php
+Following classes may be extended: Setting, Section, Page. To do so, extend the class with your code and add **_class** key with your extension class fully qualified name as value to the parameters array.
+
+```php
+$my_option = Setting::createInstance( array(
+	'_class' => '\\MyNameSpace\\MySettingExtension'
+	'option' => 'option_name_in_db',
+	'label'  => __( 'My option label', 'my-text-domain' )
+) );
+```
+
+For details see src/Factory.php
 
 ### Getting option value from database
 Please use [get_option()](https://developer.wordpress.org/reference/functions/get_option/) to get option value from the database.
