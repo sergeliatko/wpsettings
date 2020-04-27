@@ -213,7 +213,7 @@ Please see src/Section.php for details and accepted parameters.
 ```php
 <?php
 //...
-//make use of the Setting class once in your file
+//make use of the Page class once in your file
 use SergeLiatko\WPSettings\Page;
 
 //...
@@ -257,7 +257,7 @@ $my_option = Setting::createInstance( array(
 For details see src/Factory.php
 
 ### Getting option value from database
-Please use [get_option()](https://developer.wordpress.org/reference/functions/get_option/) to get option value from the database.
+Please use [get_option()](https://developer.wordpress.org/reference/functions/get_option/) WordPress function to get option value from the database. The framework deliberately does not save all your settings inside one option to stay as close as possible to WordPress default functionality and allow you to benefit from WordPress native hooks and filters over your options, thus keeping your code even more compatible with other WordPress functionalities.
 
 ## Documentation is on its way...
 While the full documentation is still not available (in process), the code source has extensive comments and parameters descriptions to help you to get the idea of possibilities. 
