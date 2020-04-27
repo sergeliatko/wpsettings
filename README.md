@@ -105,16 +105,32 @@ $ composer require sergeliatko/wpsettings
 Install the latest verions of the framework with:
 
 ```bash
-$ git clone https://github.com/sergeliatko/wpsettings
+git clone https://github.com/sergeliatko/wpsettings wpsettings
 ```
 
 Install all the required libraries:
 
 ```bash
-$ git clone https://github.com/sergeliatko/form-fields
+git clone https://github.com/sergeliatko/form-fields form-fields
 ```
 ```bash
-$ git clone https://github.com/sergeliatko/html
+git clone https://github.com/sergeliatko/html html
+```
+
+#### As a submodule
+Git submodules are a powerful tool, which allows you to easily include a third-party project of your own while still treating them as two separate projects. Rather than provide an in-depth explanation of the benefits and use of submodules, it's recommended you take a moment and read through [the submodules page](http://git-scm.com/book/en/Git-Tools-Submodules) in the official Git documentation. When you're ready to dive in, the following command generates a clone of WPSettings as a submodule:
+
+```bash
+git submodule add https://github.com/sergeliatko/wpsettings wpsettings
+```
+
+Do not forget the required libraries:
+
+```bash
+git submodule add https://github.com/sergeliatko/form-fields form-fields
+```
+```bash
+git submodule add https://github.com/sergeliatko/html html
 ```
 
 ### Manually
@@ -233,24 +249,30 @@ Following classes may be extended: Setting, Section, Page. To do so, extend the 
 ### Getting option value from database
 Please use [get_option()](https://developer.wordpress.org/reference/functions/get_option/) to get option value from the database.
 
-## Documentation is coming...
-The code source has extensive comments and parameters descriptions, but it would be really helpful of you to contribute to the project documentation via README.md file edits and [posting to issues](https://github.com/sergeliatko/wpsettings/issues).
+## Documentation is on its way...
+While the full documentation is still not available (in process), the code source has extensive comments and parameters descriptions to help you to get the idea of possibilities. 
+
+It would be really helpful of you to contribute to the project documentation via README.md file edits and [posting your documentation suggestions to issues](https://github.com/sergeliatko/wpsettings/issues).
 
 ## Support WPSettings Financially
-Get WPSettings supported and help fund the project with the [Patreon Subscription](https://www.patreon.com/sergeliatko). As of today, all the funds collected will be used to cover the expenses of project documentation.
+Support WPSettings and help fund the project with the [Patreon Subscription](https://www.patreon.com/sergeliatko). For a price of a coffe, the INSIDER plan gives you access to early updates and tips. I you're using the framework for your commercial projects, it is advised to choose CLUB MEMBER or VIP MEMBER plan to grant you feature voting power and personal support.
+
+Code review, product guidelines and consulting services are also available to help you out product development. Feel free to [contact me about that to get the quote](https://sergeliatko.com/contact/).
+
+As of today, all the funds collected will be used to cover the expenses of the project documentation.
 
 ## About
 ### Requirements
 * [PHP](https://www.php.net/) >= 5.6.0
 * [WordPress](https://wordpress.org/) >= 4.7
 * [sergeliatko/form-fields](https://github.com/sergeliatko/form-fields) >= 0.0.1
-* [sergeliatko/html](https://github.com/sergeliatko/html) >= 0.0.1 (indirectly required by [sergeliatko/form-fields](https://github.com/sergeliatko/form-fields))
+* [sergeliatko/html](https://github.com/sergeliatko/html) >= 0.0.1 (required by [sergeliatko/form-fields](https://github.com/sergeliatko/form-fields))
 
 ### Feature requests, Questions, Support and Bug Reports
 Please submit your questions and requests in [GitHub Issues](https://github.com/sergeliatko/wpsettings/issues).
 
 ### Licence
-WPSettings is licenced under GPL-3.0 licence. See [LICENCE](https://github.com/sergeliatko/wpsettings/blob/master/LICENSE) file for details.
+WPSettings is licenced under GPL-3.0. See [LICENCE](https://github.com/sergeliatko/wpsettings/blob/master/LICENSE) file for details.
 
 ### Author
 Serge Liatko - <contact@sergeliatko.com> - <https://sergeliatko.com>
