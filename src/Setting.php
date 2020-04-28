@@ -194,9 +194,12 @@ class Setting implements AdminItemInterface {
 			if ( ! is_admin() ) {
 				add_filter( "default_option_{$this->getOption()}", array( $this, 'filterDefaultOption' ), 10, 3 );
 			}
-			//make sure the default value is returned if the option value is empty and $force_default is true
 			if ( $this->isForceDefault() ) {
+				//make sure the default value is returned if the option value is empty and $force_default is true
 				add_filter( "option_{$this->getOption()}", array( $this, 'forceDefault' ), 10, 1 );
+				//make sure no empty value is saved to database when $force_default
+				add_action( "update_option_{$this->getOption()}", array( $this, 'doNotUpdateEmpty' ), 10, 2 );
+				add_action( "add_option_{$this->getOption()}", array( $this, 'doNotAddEmpty' ), 10, 2 );
 			}
 		}
 	}
@@ -790,6 +793,30 @@ class Setting implements AdminItemInterface {
 	 */
 	public function doNotAddDefault( $option, $new_value ) {
 		if ( $this->getDefault() == $new_value ) {
+			delete_option( $this->getOption() );
+		}
+	}
+
+	/**
+	 * @param mixed $old_value
+	 * @param mixed $new_value
+	 *
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function doNotUpdateEmpty( $old_value, $new_value ) {
+		if ( $this->isForceDefault() && empty( $new_value ) ) {
+			delete_option( $this->getOption() );
+		}
+	}
+
+	/**
+	 * @param string $option
+	 * @param mixed  $new_value
+	 *
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function doNotAddEmpty( $option, $new_value ) {
+		if ( $this->isForceDefault() && empty( $new_value ) ) {
 			delete_option( $this->getOption() );
 		}
 	}
