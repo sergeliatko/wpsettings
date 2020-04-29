@@ -35,6 +35,13 @@ class Setting implements AdminItemInterface {
 	use IsEmpty;
 
 	/**
+	 * Defines string to use as $type parameter for Setting to prevent registration as an option in WP.
+	 *
+	 * @const string NOT_OPTION
+	 */
+	const NOT_OPTION = 'not-option';
+
+	/**
 	 * @var string $id Setting field id (Optional, if empty, will be generated from $option).
 	 */
 	protected $id;
@@ -178,30 +185,33 @@ class Setting implements AdminItemInterface {
 		$this->setForceDefault( $force_default );
 		$this->setInputAttrs( $input_attrs );
 		$this->setChoices( $choices );
-		// register setting in admin and rest
-		add_action( 'admin_init', array( $this, 'register' ), 10, 0 );
-		if ( ! $this->isEmpty( $this->getShowInRest() ) ) {
-			add_action( 'rest_api_init', array( $this, 'register' ), 10, 0 );
+		//register option only if it is a real option
+		if ( self::NOT_OPTION !== $this->getType() ) {
+			// register setting in admin and rest
+			add_action( 'admin_init', array( $this, 'register' ), 10, 0 );
+			if ( ! $this->isEmpty( $this->getShowInRest() ) ) {
+				add_action( 'rest_api_init', array( $this, 'register' ), 10, 0 );
+			}
+			// handle default value
+			if ( ! is_null( $this->getDefault() ) ) {
+				//make sure the default option value is not saved to database (default value is defined in the source code)
+				add_action( "update_option_{$this->getOption()}", array( $this, 'doNotUpdateDefault' ), 10, 2 );
+				add_action( "add_option_{$this->getOption()}", array( $this, 'doNotAddDefault' ), 10, 2 );
+				//make sure the default value is also provided on the front end
+				if ( ! is_admin() ) {
+					add_filter( "default_option_{$this->getOption()}", array( $this, 'filterDefaultOption' ), 10, 3 );
+				}
+				if ( $this->isForceDefault() ) {
+					//make sure the default value is returned if the option value is empty and $force_default is true
+					add_filter( "option_{$this->getOption()}", array( $this, 'forceDefault' ), 10, 1 );
+					//make sure no empty value is saved to database when $force_default
+					add_action( "update_option_{$this->getOption()}", array( $this, 'doNotUpdateEmpty' ), 10, 2 );
+					add_action( "add_option_{$this->getOption()}", array( $this, 'doNotAddEmpty' ), 10, 2 );
+				}
+			}
 		}
 		// add setting field to WP UI.
 		add_action( 'admin_menu', array( $this, 'addSettingField' ), 10, 0 );
-		// handle default value
-		if ( ! is_null( $this->getDefault() ) ) {
-			//make sure the default option value is not saved to database (default value is defined in the source code)
-			add_action( "update_option_{$this->getOption()}", array( $this, 'doNotUpdateDefault' ), 10, 2 );
-			add_action( "add_option_{$this->getOption()}", array( $this, 'doNotAddDefault' ), 10, 2 );
-			//make sure the default value is also provided on the front end
-			if ( ! is_admin() ) {
-				add_filter( "default_option_{$this->getOption()}", array( $this, 'filterDefaultOption' ), 10, 3 );
-			}
-			if ( $this->isForceDefault() ) {
-				//make sure the default value is returned if the option value is empty and $force_default is true
-				add_filter( "option_{$this->getOption()}", array( $this, 'forceDefault' ), 10, 1 );
-				//make sure no empty value is saved to database when $force_default
-				add_action( "update_option_{$this->getOption()}", array( $this, 'doNotUpdateEmpty' ), 10, 2 );
-				add_action( "add_option_{$this->getOption()}", array( $this, 'doNotAddEmpty' ), 10, 2 );
-			}
-		}
 	}
 
 	/**
@@ -712,6 +722,10 @@ class Setting implements AdminItemInterface {
 				break;
 			case 'hidden':
 				echo InputHidden::HTML( $this->getFieldArguments( $current ) );
+				break;
+			case self::NOT_OPTION:
+				//if $type is 'not-option' echo $help as html instead of the setting field
+				echo $this->getHelp();
 				break;
 			default:
 				break;
