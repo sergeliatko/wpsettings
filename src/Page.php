@@ -544,9 +544,13 @@ class Page implements AdminItemInterface {
 					$script['ver'],
 					$script['in_footer']
 				);
+				//@developers: hook your wp_localize_script() functions here to localize the enqueued script
+				do_action( "admin_enqueued_script-{$script['handle']}", $this );
 			} else {
 				if ( is_string( $script ) ) {
 					wp_enqueue_script( $script );
+					//@developers: hook your wp_localize_script() functions here to localize the enqueued script
+					do_action( "admin_enqueued_script-{$script}", $this );
 				}
 			}
 		}
