@@ -1,19 +1,19 @@
 # WPSettings
 ## WordPress Settings API Framework
-This PHP package helps you to speed up the development of your settings screens in WordPress admin. The framework allows you to easily add options, settings sections and admin pages to WordPress admin, taking care to register, sanitize, properly add and display your settings accordingly WordPress Settings API and best coding standards.
+This PHP package helps speed up the development of your settings screens in WordPress admin. The framework allows you to easily add options, settings sections and admin pages to WordPress admin, including managing registering, sanitizing, properly adding and displaying your settings according to both WordPress Settings API and best coding standards.
 
-## Who it is useful for
-WPSettings framework is intended to help plugin and theme developers who need to quickly create consistent admin interfaces in WordPress no matter how small or big their projects are. It is especially usefull for developers who use WordPress as a "spare wheel" and are not very experienced with WordPress specifics and proprietary logic.
+## Who this is useful for
+WPSettings framework is intended to help plugin and theme developers who need to quickly create consistent admin interfaces in WordPress no matter how large or small their projects. It is especially useful for developers who use WordPress as a "spare wheel" and may not be very experienced with WordPress specifics and its proprietary logic.
 
-Certainly, many may say it is an overkill to use a framework that helps your interact with WordPress Settings API, plus it is not secure to rely on the code you do not control internally...
+Is it overkill to use a framework such as this that helps you interact with WordPress Settings API? Is it secure to rely on code that you do not yourself control?
 
-Well, after more than 10 years being DEEP in WordPress admin interfaces that always looked like native to WordPress - **I ended up coding this framework for me first of all**. It is something I use in all of my projects, simply because it saves me tons of time and head ache.
+Following more than 10 years of deep WordPress development, including admin interfaces that always appear native to WordPress, I coded this framework primarily for my own uses, and it has become something that I use on all of my projects. Simply put, this saves me tons of time and headache!
 
-As for the second part: the library is open source, you may always fork it on GitHub, customize to your liking and evenually create a pull request to make the others benefit from your new feature. The code will stay public and available to all of us. And if you want to [suggest features](https://github.com/sergeliatko/wpsettings/issues) or [take part in feature votes or simply support the project](https://www.patreon.com/sergeliatko), you're always welcome.
+As regards security, the library is completely open source, and you may always fork it on GitHub, customize to your own liking, and even create a pull request to allow others to benefit from your new feature. The code will remain public and be available to all of us. And, if you want to [suggest features](https://github.com/sergeliatko/wpsettings/issues) or [take part in feature votes or simply support the project](https://www.patreon.com/sergeliatko), you're most welcome to do so.
 
 ## How it works
 ### WPSettings Framework
-With WPSettings Framework adding a simple text field to General Settings in WordPress admin and all the code that sanitizes the option value in the database can be reduced to following:
+With WPSettings Framework, adding a simple text field to General Settings in WordPress admin and all the code that sanitizes the option value in the database can be accomplished simply as follows:
 
 + one line to load the library in your project main file:
 ```php
@@ -71,26 +71,26 @@ add_action( 'admin_menu', function () {
 }, 10, 0 );
 ```
 
-**6 lines** with WPSettings framework vs **30 lines** using WordPress Settings API... sure if you add more options - not all of them will take 30 lines, but still it is 5 times faster in code and skips you hell of a job to learn the WordPress Settings API hiden stones.
+**6 lines** with WPSettings framework vs **30 lines** using WordPress Settings API. Sure, if you add more options - not all of them will take 30 lines, but still it is easily 5 times faster in coding and eliminates the huge undertaking of learning the WordPress Settings API’s hidden tips and tricks.
 
 ## The best part
 WPSettings Framework takes care of:
 
-* Adding single or multiple admin pages and/or submenu pages as well as their introductory texts to WordPress admin area
-* Adding single or multiple settings sections to existing or your custom admin pages
-* Adding setting fields to existing or your custom settings sections:
-  * text inputs (all common types: hidden, text, url, email, password, tel, number, range, date etc.)
-  * checkboxes (single and multiples) and radio buttons (again single and multiple)
-  * textareas
-  * dropdowns (allows option groups as well)
-  * (WordPress text editors, pages and taxonomy terms dropdowns and colorpickers are coming in the nearest future)
-  * any custom coded field you want (you will be surprized how flexible the framework is)
-* Adding descriptions to your custom settings sections and help messages to your setting fields
-* Registration of your options in WordPress database
-* Sanitizing the user data input for most of the option types (you may use your own sanitize functions when needed)
-* Proper handling of the option default values - does not save the defaults in database, makes sure it is returned when no value is provided, allows forcing the default value if user missed the value input (very usefull for text options)
+- Adding single or multiple admin pages and/or submenu pages as well as their introductory texts to WordPress admin area.
+- Adding single or multiple settings sections to existing or your custom admin pages.
+- Adding setting fields to existing or your custom settings sections:
+	- text inputs (all common types: hidden, text, url, email, password, tel, number, range, date etc.).
+	- checkboxes (single and multiples) and radio buttons (again single and multiple).
+	- textareas.
+	- dropdowns (allows option groups as well).
+	- any custom coded field you want (you will be surprised just how flexible the framework is).
+	- WordPress text editors, pages and taxonomy terms dropdowns and color pickers are coming in the near future.
+- Adding descriptions to your custom settings sections and help messages to your setting fields.
+- Registration of your options in the WordPress database.
+- Sanitizing the user data input for most of the option types (you may use your own sanitize functions when needed).
+- Proper handling of the option default values - does not save the defaults in the database, makes sure it is returned when no value is provided, allows forcing the default value if the user missed the value input (very useful for text options).
 
-And it allows you to rewrite any functionality of the main classes providing your own extensions.
+WPSettings Framework allows you to rewrite any functionality of the main classes providing your own extensions.
 
 ## Installation
 
@@ -102,7 +102,7 @@ $ composer require sergeliatko/wpsettings
 ```
 
 ### Using git
-Install the latest verions of the framework with:
+Install the latest version of the framework with:
 
 ```bash
 git clone https://github.com/sergeliatko/wpsettings wpsettings
@@ -140,7 +140,7 @@ Download zip files for all necessary libraries:
 * [FormFields](https://github.com/sergeliatko/form-fields)
 * [HTML](https://github.com/sergeliatko/html)
 
-And extract them in your project ressources folder.
+And extract them in your project resources folder.
 
 ## Loading the framework classes
 
@@ -263,19 +263,19 @@ $my_option = Setting::createInstance( array(
 For details see src/Factory.php
 
 ### Getting option value from database
-Please use [get_option()](https://developer.wordpress.org/reference/functions/get_option/) WordPress function to get option value from the database. The framework deliberately does not save all your settings inside one option to stay as close as possible to WordPress default functionality and allow you to benefit from WordPress native hooks and filters over your options, thus keeping your code even more compatible with other WordPress functionalities.
+Please use [get_option()](https://developer.wordpress.org/reference/functions/get_option/) WordPress function to get option value from the database. The framework deliberately does not save all your settings inside one option to stay as close as possible to WordPress default functionality and allow you to benefit from WordPress native hooks and filters over your options, thus keeping your code even more compatible with other WordPress functions.
 
 ## Documentation is on its way...
-While the full documentation is still not available (in process), the code source has extensive comments and parameters descriptions to help you to get the idea of possibilities. 
+While the full documentation is still in development, the code source has extensive comments and parameters descriptions to help you to get the idea of possibilities.
 
-It would be really helpful of you to contribute to the project documentation via README.md file edits and [posting your documentation suggestions to issues](https://github.com/sergeliatko/wpsettings/issues).
+I would be most appreciative of your contributions to the project documentation via README.md file edits as well as [posting your documentation suggestions to issues](https://github.com/sergeliatko/wpsettings/issues).
 
 ## Support WPSettings Financially
-Support WPSettings and help fund the project with the [Patreon Subscription](https://www.patreon.com/sergeliatko). For a price of a coffe, the INSIDER plan gives you access to early updates and tips. I you're using the framework for your commercial projects, it is advised to choose CLUB MEMBER or VIP MEMBER plan to grant you feature voting power and personal support.
+Support WPSettings and help fund the project via the [GitHub Sponsorship Program](https://github.com/sponsors/sergeliatko). For a price of a cup of coffee, you can access to early updates and tips. If you're using the framework for your commercial projects, I recommend you choose a bigger contribution plan to obtain the feature voting power and/or my personal support via chat.
 
-Code review, product guidelines and consulting services are also available to help you out product development. Feel free to [contact me about that to get the quote](https://sergeliatko.com/contact/).
+Code review, product guidelines and consulting services are also available to help your product development. Feel free to [contact me](https://sergeliatko.com/?utm_source=github&utm_medium=repository-readme-file&utm_campaign=wpsettings) to discuss your project.
 
-As of today, all the funds collected will be used to cover the expenses of the project documentation.
+Also, all the funds collected will be used to cover the expenses of the project documentation and promotion.
 
 ## About
 ### Requirements
@@ -291,9 +291,9 @@ Please submit your questions and requests in [GitHub Issues](https://github.com/
 WPSettings is licenced under GPL-3.0. See [LICENCE](https://github.com/sergeliatko/wpsettings/blob/master/LICENSE) file for details.
 
 ### Author
-Serge Liatko - <contact@sergeliatko.com> - <https://sergeliatko.com>
+Serge Liatko - [contact(at)sergeliatko.com](https://sergeliatko.com/?utm_source=github&utm_medium=repository-readme-file&utm_campaign=wpsettings) - [https://sergeliatko.com](https://sergeliatko.com/?utm_source=github&utm_medium=repository-readme-file&utm_campaign=wpsettings)
 
 ### Build with
 * [PHPStorm](https://www.jetbrains.com/phpstorm/)
-* [Wampserver](http://wampserver.aviatechno.net/)
+* [Wampserver](http://wampserver.aviatechno.net)
 * [WordPress](https://wordpress.org)
