@@ -138,22 +138,35 @@ class Page implements AdminItemInterface {
 	protected $sections;
 
 	/**
+	 * Array of scripts to load on this admin page.
+	 *
+	 * Optional. Defaults to empty array.
+	 *
+	 * If value in this array is a string, it will be used as script handle in wp_enqueue_scripts().
+	 * If value is an associative array, its parts will be used in wp_enqueue_scripts(). See enqueueScripts() for details.
+	 *
+	 * @var string[]|array[]
+	 */
+	protected $scripts;
+
+	/**
 	 * Page constructor.
 	 *
 	 * @param array $params
 	 */
 	public function __construct( array $params ) {
 		/**
-		 * @var string   $slug
-		 * @var string   $label
-		 * @var string   $title
-		 * @var string   $description
-		 * @var string   $capability
-		 * @var string   $parent
-		 * @var int|null $position
-		 * @var string   $icon
-		 * @var callable $callback
-		 * @var array[]  $sections
+		 * @var string           $slug
+		 * @var string           $label
+		 * @var string           $title
+		 * @var string           $description
+		 * @var string           $capability
+		 * @var string           $parent
+		 * @var int|null         $position
+		 * @var string           $icon
+		 * @var callable         $callback
+		 * @var array[]          $sections
+		 * @var string[]|array[] $scripts
 		 */
 		extract( wp_parse_args( $params, $this->getDefaultParameters() ), EXTR_OVERWRITE );
 		$this->setSlug( $slug );
@@ -165,6 +178,7 @@ class Page implements AdminItemInterface {
 		$this->setPosition( $position );
 		$this->setIcon( $icon );
 		$this->setCallback( $callback );
+		$this->setScripts( $scripts );
 		//hook page registration before sections
 		add_action( 'admin_menu', array( $this, 'register' ), 10, 0 );
 		$this->setSections( $sections );
@@ -194,9 +208,15 @@ class Page implements AdminItemInterface {
 	 * @return Page
 	 */
 	public function setHook( $hook = '' ) {
-		//display setting errors (and update message) if it is not in admin Settings submenu.
-		if ( ! empty( $hook ) && ( 'options-general.php' !== $this->getParent() ) ) {
-			add_action( "admin_footer-{$hook}", 'settings_errors', 10, 0 );
+		if ( ! empty( $hook ) ) {
+			//enqueue scripts if needed
+			if ( ! $this->isEmpty( $this->getScripts() ) ) {
+				add_action( "load-{$hook}", array( $this, 'loadScripts' ), 10, 0 );
+			}
+			//display setting errors (and update message) if it is not in admin Settings submenu.
+			if ( 'options-general.php' !== $this->getParent() ) {
+				add_action( "admin_footer-{$hook}", 'settings_errors', 10, 0 );
+			}
 		}
 		$this->hook = $hook;
 
@@ -406,6 +426,47 @@ class Page implements AdminItemInterface {
 	}
 
 	/**
+	 * @return array[]|string[]
+	 */
+	public function getScripts() {
+		if ( ! is_array( $this->scripts ) ) {
+			$this->setScripts( array() );
+		}
+
+		return $this->scripts;
+	}
+
+	/**
+	 * @param array[]|string[] $scripts
+	 *
+	 * @return Page
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function setScripts( array $scripts ) {
+		array_walk( $scripts, function ( &$script, $order, $defaults ) {
+			if ( is_array( $script ) ) {
+				$script = wp_parse_args( $script, $defaults );
+				if ( empty( $script['handle'] ) ) {
+					$script = null;
+				}
+			} else {
+				if ( ! is_string( $script ) || empty( $script ) ) {
+					$script = null;
+				}
+			}
+		}, array(
+			'handle'    => '',
+			'scr'       => '',
+			'deps'      => array(),
+			'ver'       => false,
+			'in_footer' => false,
+		) );
+		$this->scripts = array_filter( $scripts );
+
+		return $this;
+	}
+
+	/**
 	 * @return string
 	 * @noinspection PhpUnused
 	 */
@@ -464,6 +525,34 @@ class Page implements AdminItemInterface {
 	}
 
 	/**
+	 * Hooks enqueueScripts() to admin_enqueue_scripts.
+	 */
+	public function loadScripts() {
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueueScripts' ), 10, 0 );
+	}
+
+	/**
+	 * Enqueues scripts for this page in WordPress admin.
+	 */
+	public function enqueueScripts() {
+		foreach ( $this->getScripts() as $script ) {
+			if ( is_array( $script ) ) {
+				wp_enqueue_script(
+					$script['handle'],
+					$script['src'],
+					$script['deps'],
+					$script['ver'],
+					$script['in_footer']
+				);
+			} else {
+				if ( is_string( $script ) ) {
+					wp_enqueue_script( $script );
+				}
+			}
+		}
+	}
+
+	/**
 	 * Returns default Page parameters.
 	 *
 	 * @return array
@@ -480,6 +569,7 @@ class Page implements AdminItemInterface {
 			'icon'        => '',
 			'callback'    => array( $this, 'display' ),
 			'sections'    => array(),
+			'scripts'     => array(),
 		);
 	}
 
