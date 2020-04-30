@@ -19,8 +19,8 @@
   ],
   "funding": [
     {
-      "type": "patreon",
-      "url": "https://www.patreon.com/sergeliatko"
+      "type": "github",
+      "url": "https://github.com/sponsors/sergeliatko"
     }
   ],
   "require": {
