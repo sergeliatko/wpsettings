@@ -527,8 +527,8 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setForceDefault( $force_default ) {
-		$this->force_default = ! empty( $force_default );
+	public function setForceDefault( bool $force_default ) {
+		$this->force_default = !empty( $force_default );
 
 		return $this;
 	}
@@ -537,7 +537,7 @@ class Setting implements AdminItemInterface {
 	 * @return array
 	 */
 	public function getInputAttrs() {
-		if ( ! is_array( $this->input_attrs ) ) {
+		if ( !is_array( $this->input_attrs ) ) {
 			$this->setInputAttrs( array() );
 		}
 
@@ -749,7 +749,7 @@ class Setting implements AdminItemInterface {
 	 * @return mixed
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function filterDefaultOption( $default, $option, $passed_default ) {
+	public function filterDefaultOption( $default, string $option, bool $passed_default ) {
 		if ( $passed_default ) {
 			return $default;
 		}
@@ -805,7 +805,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function doNotAddDefault( $option, $new_value ) {
+	public function doNotAddDefault( string $option, $new_value ) {
 		if ( $this->getDefault() == $new_value ) {
 			delete_option( $this->getOption() );
 		}
@@ -829,7 +829,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function doNotAddEmpty( $option, $new_value ) {
+	public function doNotAddEmpty( string $option, $new_value ) {
 		if ( $this->isForceDefault() && empty( $new_value ) ) {
 			delete_option( $this->getOption() );
 		}
