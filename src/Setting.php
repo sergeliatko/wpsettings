@@ -18,6 +18,7 @@ use SergeLiatko\FormFields\InputRadio;
 use SergeLiatko\FormFields\InputRange;
 use SergeLiatko\FormFields\InputTel;
 use SergeLiatko\FormFields\InputText;
+use SergeLiatko\FormFields\InputTime;
 use SergeLiatko\FormFields\InputUrl;
 use SergeLiatko\FormFields\Radios;
 use SergeLiatko\FormFields\Select;
@@ -189,16 +190,16 @@ class Setting implements AdminItemInterface {
 		if ( self::NOT_OPTION !== $this->getType() ) {
 			// register setting in admin and rest
 			add_action( 'admin_init', array( $this, 'register' ), 10, 0 );
-			if ( ! $this->isEmpty( $this->getShowInRest() ) ) {
+			if ( !$this->isEmpty( $this->getShowInRest() ) ) {
 				add_action( 'rest_api_init', array( $this, 'register' ), 10, 0 );
 			}
 			// handle default value
-			if ( ! is_null( $this->getDefault() ) ) {
+			if ( !is_null( $this->getDefault() ) ) {
 				//make sure the default option value is not saved to database (default value is defined in the source code)
 				add_action( "update_option_{$this->getOption()}", array( $this, 'doNotUpdateDefault' ), 10, 2 );
 				add_action( "add_option_{$this->getOption()}", array( $this, 'doNotAddDefault' ), 10, 2 );
 				//make sure the default value is also provided on the front end
-				if ( ! is_admin() ) {
+				if ( !is_admin() ) {
 					add_filter( "default_option_{$this->getOption()}", array( $this, 'filterDefaultOption' ), 10, 3 );
 				}
 				if ( $this->isForceDefault() ) {
@@ -474,7 +475,7 @@ class Setting implements AdminItemInterface {
 	 * @return array
 	 */
 	public function getDisplayArgs() {
-		if ( ! is_array( $this->display_args ) ) {
+		if ( !is_array( $this->display_args ) ) {
 			$this->setDisplayArgs( array() );
 		}
 
@@ -565,7 +566,7 @@ class Setting implements AdminItemInterface {
 	 * @return array
 	 */
 	public function getChoices() {
-		if ( ! is_array( $this->choices ) ) {
+		if ( !is_array( $this->choices ) ) {
 			$this->setChoices( array() );
 		}
 
@@ -594,7 +595,7 @@ class Setting implements AdminItemInterface {
 				// handle all strings but for "false" and "0" and not empty values as boolean true.
 				$value = is_string( $value ) ?
 					( in_array( strtolower( $value ), array( 'false', '0' ) ) ? false : true )
-					: ! empty( $value );
+					: !empty( $value );
 				break;
 			case 'integer':
 				$value = intval( $value );
@@ -622,6 +623,7 @@ class Setting implements AdminItemInterface {
 					case 'color':
 					case 'date': #todo: separate sanitize
 					case 'date-time-local': #todo: separate sanitize
+					case 'time': #todo separate sanitize
 					case 'number': #prefer data type parameter over type - sanitize as string value
 					case 'range': #prefer data type parameter over type - sanitize as string value
 					case 'select':
@@ -716,6 +718,9 @@ class Setting implements AdminItemInterface {
 				break;
 			case 'date-time-local':
 				echo InputDateTimeLocal::HTML( $this->getFieldArguments( $current ) );
+				break;
+			case 'time':
+				echo InputTime::HTML( $this->getFieldArguments( $current ) );
 				break;
 			case 'file':
 				echo InputFile::HTML( $this->getFieldArguments( $current ) );
@@ -903,7 +908,7 @@ class Setting implements AdminItemInterface {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function parse_args_recursive( $args, $default, $preserve_integer_keys = false ) {
-		if ( ! is_array( $default ) && ! is_object( $default ) ) {
+		if ( !is_array( $default ) && !is_object( $default ) ) {
 			return wp_parse_args( $args, $default );
 		}
 
@@ -912,7 +917,7 @@ class Setting implements AdminItemInterface {
 
 		foreach ( array( $default, $args ) as $elements ) {
 			foreach ( (array) $elements as $key => $element ) {
-				if ( is_integer( $key ) && ! $preserve_integer_keys ) {
+				if ( is_integer( $key ) && !$preserve_integer_keys ) {
 					$output[] = $element;
 				} elseif (
 					isset( $output[ $key ] ) &&
