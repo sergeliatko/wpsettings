@@ -614,6 +614,10 @@ class Setting implements AdminItemInterface {
 					case 'url':
 						$value = esc_url_raw( $value );
 						break;
+					case 'checkboxes':
+					case 'radios':
+						$value = array_map( 'sanitize_text_field', (array) $value );
+						break;
 					case 'hidden':
 					case 'text':
 					case 'checkbox':
@@ -664,20 +668,18 @@ class Setting implements AdminItemInterface {
 				) ) );
 				break;
 			case 'checkbox':
-				if ( $this->isEmpty( $this->getChoices() ) ) {
-					echo InputCheckbox::HTML( $this->getFieldArguments( $current, array(
-						'value' => '1',
-					) ) );
-				} else {
-					echo Checkboxes::HTML( $this->getFieldArguments( $current ) );
-				}
+				echo InputCheckbox::HTML( $this->getFieldArguments( $current, array(
+					'value' => '1',
+				) ) );
+				break;
+			case 'checkboxes':
+				echo Checkboxes::HTML( $this->getFieldArguments( $current ) );
 				break;
 			case 'radio':
-				if ( $this->isEmpty( $this->getChoices() ) ) {
-					echo InputRadio::HTML( $this->getFieldArguments( $current ) );
-				} else {
-					echo Radios::HTML( $this->getFieldArguments( $current ) );
-				}
+				echo InputRadio::HTML( $this->getFieldArguments( $current ) );
+				break;
+			case 'radios':
+				echo Radios::HTML( $this->getFieldArguments( $current ) );
 				break;
 			case 'select':
 				echo Select::HTML( $this->getFieldArguments( $current ) );
@@ -870,8 +872,9 @@ class Setting implements AdminItemInterface {
 	protected function generateDataType() {
 		//todo: check the data type from the show in rest parameter first
 		switch ( $this->getType() ) {
-			case 'checkbox':
-				$type = $this->isEmpty( $this->getChoices() ) ? 'string' : 'array';
+			case 'checkboxes':
+			case 'radios':
+				$type = 'array';
 				break;
 			case 'integer':
 			case 'range':
@@ -884,6 +887,8 @@ class Setting implements AdminItemInterface {
 				$input_attrs = $this->getInputAttrs();
 				$type        = isset( $input_attrs['multiple'] ) ? 'array' : 'string';
 				break;
+			case 'checkbox':
+			case 'radio':
 			default:
 				$type = 'string';
 				break;
