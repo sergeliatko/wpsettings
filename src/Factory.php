@@ -18,10 +18,11 @@ class Factory {
 	 *
 	 * @return object|\SergeLiatko\WPSettings\Interfaces\AdminItemInterface
 	 */
-	public static function createItem( array $params, $default ) {
+	public static function createItem( array $params, string $default ) {
 		$class = empty( $params['_class'] ) ? $default : $params['_class'];
 		unset( $params['_class'] );
 
 		return new $class( $params );
 	}
+
 }

@@ -5,6 +5,7 @@ namespace SergeLiatko\WPSettings;
 
 use SergeLiatko\WPSettings\Interfaces\AdminItemInterface;
 use SergeLiatko\WPSettings\Traits\AdminItemHandler;
+use SergeLiatko\WPSettings\Traits\IsCallableOrClosure;
 use SergeLiatko\WPSettings\Traits\IsEmpty;
 
 /**
@@ -14,7 +15,7 @@ use SergeLiatko\WPSettings\Traits\IsEmpty;
  */
 class Page implements AdminItemInterface {
 
-	use AdminItemHandler, IsEmpty;
+	use AdminItemHandler, IsCallableOrClosure, IsEmpty;
 
 	/**
 	 * Hook suffix returned by add_menu_page() or add_submenu_page() upon registration in WordPress UI.
@@ -122,7 +123,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * Represents $function in add_menu_page() and add_submenu_page().
 	 *
-	 * @var callable $callback
+	 * @var \Closure|callable|string|array|null $callback
 	 */
 	protected $callback;
 
@@ -198,7 +199,7 @@ class Page implements AdminItemInterface {
 	 * @return string
 	 * @noinspection PhpUnused
 	 */
-	public function getHook() {
+	public function getHook(): string {
 		return $this->hook;
 	}
 
@@ -207,10 +208,10 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setHook( $hook = '' ) {
-		if ( ! empty( $hook ) ) {
+	public function setHook( $hook = '' ): Page {
+		if ( !empty( $hook ) ) {
 			//enqueue scripts if needed
-			if ( ! $this->isEmpty( $this->getScripts() ) ) {
+			if ( !$this->isEmpty( $this->getScripts() ) ) {
 				add_action( "load-{$hook}", array( $this, 'loadScripts' ), 10, 0 );
 			}
 			//display setting errors (and update message) if it is not in admin Settings submenu.
@@ -227,7 +228,7 @@ class Page implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getSlug() {
+	public function getSlug(): string {
 		return $this->slug;
 	}
 
@@ -236,7 +237,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setSlug( $slug ) {
+	public function setSlug( string $slug ): Page {
 		$this->slug = sanitize_key( $slug );
 
 		return $this;
@@ -245,7 +246,7 @@ class Page implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getLabel() {
+	public function getLabel(): string {
 		return $this->label;
 	}
 
@@ -254,7 +255,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setLabel( $label ) {
+	public function setLabel( string $label ): Page {
 		$this->label = sanitize_text_field( $label );
 
 		return $this;
@@ -263,7 +264,7 @@ class Page implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getTitle() {
+	public function getTitle(): string {
 		if ( empty( $this->title ) ) {
 			$this->setTitle( $this->getLabel() );
 		}
@@ -276,7 +277,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setTitle( $title = '' ) {
+	public function setTitle( string $title = '' ): Page {
 		$this->title = sanitize_text_field( $title );
 
 		return $this;
@@ -285,7 +286,7 @@ class Page implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getDescription() {
+	public function getDescription(): string {
 		return $this->description;
 	}
 
@@ -294,7 +295,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setDescription( $description = '' ) {
+	public function setDescription( string $description = '' ): Page {
 		$this->description = trim( strval( $description ) );
 
 		return $this;
@@ -303,9 +304,9 @@ class Page implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getCapability() {
+	public function getCapability(): string {
 		if ( empty( $this->capability ) ) {
-			$this->setCapability( 'manage_options' );
+			$this->setCapability();
 		}
 
 		return $this->capability;
@@ -316,7 +317,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setCapability( $capability = 'manage_options' ) {
+	public function setCapability( string $capability = 'manage_options' ): Page {
 		$this->capability = sanitize_key( $capability );
 
 		return $this;
@@ -325,7 +326,7 @@ class Page implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getParent() {
+	public function getParent(): string {
 		return $this->parent;
 	}
 
@@ -334,7 +335,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setParent( $parent = '' ) {
+	public function setParent( $parent = '' ): Page {
 		$this->parent = trim( strval( $parent ) );
 
 		return $this;
@@ -343,7 +344,7 @@ class Page implements AdminItemInterface {
 	/**
 	 * @return int|null
 	 */
-	public function getPosition() {
+	public function getPosition(): ?int {
 		return $this->position;
 	}
 
@@ -352,7 +353,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setPosition( $position = null ) {
+	public function setPosition( ?int $position = null ): Page {
 		$this->position = is_null( $position ) ? $position : intval( $position );
 
 		return $this;
@@ -361,7 +362,7 @@ class Page implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getIcon() {
+	public function getIcon(): string {
 		return $this->icon;
 	}
 
@@ -370,17 +371,17 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setIcon( $icon = '' ) {
+	public function setIcon( string $icon = '' ): Page {
 		$this->icon = trim( strval( $icon ) );
 
 		return $this;
 	}
 
 	/**
-	 * @return callable
+	 * @return \Closure|callable|string|array
 	 */
 	public function getCallback() {
-		if ( ! is_callable( $this->callback ) ) {
+		if ( !$this->is_callable_or_closure( $this->callback ) ) {
 			$this->setCallback( array( $this, 'display' ) );
 		}
 
@@ -388,12 +389,12 @@ class Page implements AdminItemInterface {
 	}
 
 	/**
-	 * @param callable $callback
+	 * @param \Closure|callable|string|array|null $callback
 	 *
 	 * @return Page
 	 */
-	public function setCallback( callable $callback ) {
-		$this->callback = $callback;
+	public function setCallback( $callback ): Page {
+		$this->callback = $this->is_callable_or_closure( $callback ) ? $callback : null;
 
 		return $this;
 	}
@@ -402,8 +403,8 @@ class Page implements AdminItemInterface {
 	 * @return array|\SergeLiatko\WPSettings\Section[]
 	 * @noinspection PhpUnused
 	 */
-	public function getSections() {
-		if ( ! is_array( $this->sections ) ) {
+	public function getSections(): array {
+		if ( !is_array( $this->sections ) ) {
 			$this->setSections( array() );
 		}
 
@@ -415,7 +416,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setSections( array $sections = array() ) {
+	public function setSections( array $sections = array() ): Page {
 		$this->sections = $this->instantiateItems(
 			$sections,
 			'\\SergeLiatko\\WPSettings\\Section',
@@ -428,8 +429,8 @@ class Page implements AdminItemInterface {
 	/**
 	 * @return array[]|string[]
 	 */
-	public function getScripts() {
-		if ( ! is_array( $this->scripts ) ) {
+	public function getScripts(): array {
+		if ( !is_array( $this->scripts ) ) {
 			$this->setScripts( array() );
 		}
 
@@ -442,7 +443,7 @@ class Page implements AdminItemInterface {
 	 * @return Page
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function setScripts( array $scripts ) {
+	public function setScripts( array $scripts ): Page {
 		array_walk( $scripts, function ( &$script, $order, $defaults ) {
 			if ( is_array( $script ) ) {
 				$script = wp_parse_args( $script, $defaults );
@@ -450,7 +451,7 @@ class Page implements AdminItemInterface {
 					$script = null;
 				}
 			} else {
-				if ( ! is_string( $script ) || empty( $script ) ) {
+				if ( !is_string( $script ) || empty( $script ) ) {
 					$script = null;
 				}
 			}
@@ -470,7 +471,7 @@ class Page implements AdminItemInterface {
 	 * @return string
 	 * @noinspection PhpUnused
 	 */
-	public function getId() {
+	public function getId(): string {
 		return $this->getSlug();
 	}
 
@@ -486,7 +487,7 @@ class Page implements AdminItemInterface {
 			sprintf( '<h2>%s</h2>', esc_html( get_admin_page_title() ) ),
 			esc_url( admin_url( 'options.php' ) )
 		);
-		if ( ! $this->isEmpty( $description = $this->getDescription() ) ) {
+		if ( !$this->isEmpty( $description = $this->getDescription() ) ) {
 			echo wpautop( $description );
 		}
 		do_action( "before_setting_sections-{$slug}", $this );
@@ -563,7 +564,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return array
 	 */
-	protected function getDefaultParameters() {
+	protected function getDefaultParameters(): array {
 		return array(
 			'slug'        => '',
 			'label'       => '',

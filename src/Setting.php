@@ -24,6 +24,7 @@ use SergeLiatko\FormFields\Radios;
 use SergeLiatko\FormFields\Select;
 use SergeLiatko\FormFields\Textarea;
 use SergeLiatko\WPSettings\Interfaces\AdminItemInterface;
+use SergeLiatko\WPSettings\Traits\IsCallableOrClosure;
 use SergeLiatko\WPSettings\Traits\IsEmpty;
 
 /**
@@ -33,7 +34,7 @@ use SergeLiatko\WPSettings\Traits\IsEmpty;
  */
 class Setting implements AdminItemInterface {
 
-	use IsEmpty;
+	use IsCallableOrClosure, IsEmpty;
 
 	/**
 	 * Defines string to use as $type parameter for Setting to prevent registration as an option in WP.
@@ -95,12 +96,12 @@ class Setting implements AdminItemInterface {
 	protected $show_in_rest;
 
 	/**
-	 * @var callable $sanitize_callback A callback function that sanitizes the option's value.
+	 * @var \Closure|callable|string|array|null $sanitize_callback A callback function that sanitizes the option's value.
 	 */
 	protected $sanitize_callback;
 
 	/**
-	 * @var callable $display_callback A callback function that displays the setting in WP UI.
+	 * @var \Closure|callable|string|array|null $display_callback A callback function that displays the setting in WP UI.
 	 */
 	protected $display_callback;
 
@@ -227,7 +228,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getId() {
+	public function getId(): string {
 		if ( empty( $this->id ) ) {
 			$this->setId( $this->generateId() );
 		}
@@ -240,7 +241,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setId( $id = '' ) {
+	public function setId( string $id = '' ): Setting {
 		$this->id = sanitize_key( $id );
 
 		return $this;
@@ -249,18 +250,18 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getOption() {
+	public function getOption(): string {
 		return $this->option;
 	}
 
 	/**
-	 * @param $option
+	 * @param string $option
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 *
 	 * @throws \Exception
 	 */
-	public function setOption( $option ) {
+	public function setOption( string $option ): Setting {
 		if ( $this->isEmpty( $option = sanitize_key( $option ) ) ) {
 			throw new Exception( 'Option parameter must not be empty.' );
 		}
@@ -272,7 +273,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getLabel() {
+	public function getLabel(): string {
 		return $this->label;
 	}
 
@@ -281,7 +282,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setLabel( $label = '' ) {
+	public function setLabel( string $label = '' ): Setting {
 		$this->label = sanitize_text_field( $label );
 
 		return $this;
@@ -290,7 +291,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getHelp() {
+	public function getHelp(): string {
 		return $this->help;
 	}
 
@@ -299,7 +300,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setHelp( $help = '' ) {
+	public function setHelp( string $help = '' ): Setting {
 		$this->help = strval( $help );
 
 		return $this;
@@ -308,7 +309,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getDescription() {
+	public function getDescription(): string {
 		if ( empty( $this->description ) ) {
 			$this->setDescription( $this->getLabel() );
 		}
@@ -321,7 +322,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setDescription( $description = '' ) {
+	public function setDescription( string $description = '' ): Setting {
 		$this->description = strval( $description );
 
 		return $this;
@@ -330,9 +331,9 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getPage() {
+	public function getPage(): string {
 		if ( empty( $this->page ) ) {
-			$this->setPage( 'general' );
+			$this->setPage();
 		}
 
 		return $this->page;
@@ -343,8 +344,8 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setPage( $page = '' ) {
-		$this->page = sanitize_text_field( $page );
+	public function setPage( string $page = 'general' ): Setting {
+		$this->page = $page;
 
 		return $this;
 	}
@@ -352,9 +353,9 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getSection() {
+	public function getSection(): string {
 		if ( empty( $this->section ) ) {
-			$this->setSection( 'default' );
+			$this->setSection();
 		}
 
 		return $this->section;
@@ -365,10 +366,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setSection( $section = '' ) {
-		if ( $this->isEmpty( $section = sanitize_key( $section ) ) ) {
-			$section = 'default';
-		}
+	public function setSection( string $section = 'default' ): Setting {
 		$this->section = $section;
 
 		return $this;
@@ -377,7 +375,11 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getType() {
+	public function getType(): string {
+		if ( empty( $this->type ) ) {
+			$this->setType();
+		}
+
 		return $this->type;
 	}
 
@@ -386,11 +388,8 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setType( $type = '' ) {
-		if ( $this->isEmpty( $type = sanitize_key( $type ) ) ) {
-			$type = 'text';
-		}
-		$this->type = $type;
+	public function setType( string $type = 'text' ): Setting {
+		$this->type = sanitize_key( $type );
 
 		return $this;
 	}
@@ -398,7 +397,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getDataType() {
+	public function getDataType(): string {
 		if ( empty( $this->data_type ) ) {
 			$this->setDataType( $this->generateDataType() );
 		}
@@ -411,7 +410,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setDataType( $data_type = '' ) {
+	public function setDataType( string $data_type = '' ): Setting {
 		$this->data_type = sanitize_key( $data_type );
 
 		return $this;
@@ -429,44 +428,52 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setShowInRest( $show_in_rest ) {
+	public function setShowInRest( $show_in_rest ): Setting {
 		$this->show_in_rest = $show_in_rest;
 
 		return $this;
 	}
 
 	/**
-	 * @return callable
+	 * @return \Closure|callable|string|array
 	 */
 	public function getSanitizeCallback() {
+		if ( !$this->is_callable_or_closure( $this->sanitize_callback ) ) {
+			$this->setSanitizeCallback( array( $this, 'sanitize' ) );
+		}
+
 		return $this->sanitize_callback;
 	}
 
 	/**
-	 * @param callable $sanitize_callback
+	 * @param \Closure|callable|string|array|null $sanitize_callback
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setSanitizeCallback( callable $sanitize_callback ) {
-		$this->sanitize_callback = $sanitize_callback;
+	public function setSanitizeCallback( $sanitize_callback ): Setting {
+		$this->sanitize_callback = $this->is_callable_or_closure( $sanitize_callback ) ? $sanitize_callback : null;
 
 		return $this;
 	}
 
 	/**
-	 * @return callable
+	 * @return \Closure|callable|string|array
 	 */
 	public function getDisplayCallback() {
+		if ( !$this->is_callable_or_closure( $this->display_callback ) ) {
+			$this->setDisplayCallback( array( $this, 'display' ) );
+		}
+
 		return $this->display_callback;
 	}
 
 	/**
-	 * @param callable $display_callback
+	 * @param \Closure|callable|string|array|null $display_callback
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setDisplayCallback( callable $display_callback ) {
-		$this->display_callback = $display_callback;
+	public function setDisplayCallback( $display_callback ): Setting {
+		$this->display_callback = $this->is_callable_or_closure( $display_callback ) ? $display_callback : null;
 
 		return $this;
 	}
@@ -474,7 +481,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return array
 	 */
-	public function getDisplayArgs() {
+	public function getDisplayArgs(): array {
 		if ( !is_array( $this->display_args ) ) {
 			$this->setDisplayArgs( array() );
 		}
@@ -487,7 +494,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setDisplayArgs( array $display_args ) {
+	public function setDisplayArgs( array $display_args = array() ): Setting {
 		$this->display_args = wp_parse_args(
 			$display_args,
 			array(
@@ -510,7 +517,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setDefault( $default = null ) {
+	public function setDefault( $default = null ): Setting {
 		$this->default = $default;
 
 		return $this;
@@ -519,7 +526,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return bool
 	 */
-	public function isForceDefault() {
+	public function isForceDefault(): bool {
 		return (bool) $this->force_default;
 	}
 
@@ -528,7 +535,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setForceDefault( bool $force_default ) {
+	public function setForceDefault( bool $force_default = false ): Setting {
 		$this->force_default = !empty( $force_default );
 
 		return $this;
@@ -537,9 +544,9 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return array
 	 */
-	public function getInputAttrs() {
+	public function getInputAttrs(): array {
 		if ( !is_array( $this->input_attrs ) ) {
-			$this->setInputAttrs( array() );
+			$this->setInputAttrs();
 		}
 
 		return $this->input_attrs;
@@ -550,7 +557,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setInputAttrs( array $input_attrs ) {
+	public function setInputAttrs( array $input_attrs = array() ): Setting {
 		$this->input_attrs = wp_parse_args(
 			$input_attrs,
 			array(
@@ -565,7 +572,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return array
 	 */
-	public function getChoices() {
+	public function getChoices(): array {
 		if ( !is_array( $this->choices ) ) {
 			$this->setChoices( array() );
 		}
@@ -578,7 +585,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
-	public function setChoices( array $choices ) {
+	public function setChoices( array $choices ): Setting {
 		$this->choices = $choices;
 
 		return $this;
@@ -848,7 +855,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return array
 	 */
-	protected function getFieldArguments( $current, $input_attrs = array() ) {
+	protected function getFieldArguments( $current, $input_attrs = array() ): array {
 		return array(
 			'id'          => $this->getId(),
 			'input_attrs' => wp_parse_args(
@@ -869,7 +876,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return string
 	 */
-	protected function generateDataType() {
+	protected function generateDataType(): string {
 		//todo: check the data type from the show in rest parameter first
 		switch ( $this->getType() ) {
 			case 'checkboxes':
@@ -900,7 +907,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	protected function generateId() {
+	protected function generateId(): string {
 		return trim( preg_replace( '/([^a-z0-9-]+)/', '-', strtolower( $this->getOption() ) ), '-' );
 	}
 
@@ -946,7 +953,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return array
 	 */
-	protected function getDefaultParameters() {
+	protected function getDefaultParameters(): array {
 		return array(
 			'id'                => '',
 			'option'            => '',

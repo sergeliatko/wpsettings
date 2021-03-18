@@ -5,6 +5,7 @@ namespace SergeLiatko\WPSettings;
 
 use SergeLiatko\WPSettings\Interfaces\AdminItemInterface;
 use SergeLiatko\WPSettings\Traits\AdminItemHandler;
+use SergeLiatko\WPSettings\Traits\IsCallableOrClosure;
 use SergeLiatko\WPSettings\Traits\IsEmpty;
 
 /**
@@ -14,7 +15,7 @@ use SergeLiatko\WPSettings\Traits\IsEmpty;
  */
 class Section implements AdminItemInterface {
 
-	use AdminItemHandler, IsEmpty;
+	use AdminItemHandler, IsCallableOrClosure, IsEmpty;
 
 	/**
 	 * @var string $id Section ID. Optional, defaults to 'default'.
@@ -38,8 +39,8 @@ class Section implements AdminItemInterface {
 	protected $description;
 
 	/**
-	 * @var callable $callback Section display callback function.
-	 *                         Optional, defaults to \SergeLiatko\WPSettings\Section::display().
+	 * @var \Closure|callable|string|array|null $callback Section display callback function.
+	 *                                                    Optional, defaults to \SergeLiatko\WPSettings\Section::display().
 	 */
 	protected $callback;
 
@@ -88,7 +89,7 @@ class Section implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getId() {
+	public function getId(): string {
 		return $this->id;
 	}
 
@@ -97,7 +98,7 @@ class Section implements AdminItemInterface {
 	 *
 	 * @return Section
 	 */
-	public function setId( $id = 'default' ) {
+	public function setId( string $id = 'default' ): Section {
 		if ( $this->isEmpty( $id = sanitize_key( $id ) ) ) {
 			$id = 'default';
 		}
@@ -109,7 +110,11 @@ class Section implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getPage() {
+	public function getPage(): string {
+		if ( $this->isEmpty( $this->page ) ) {
+			$this->setPage();
+		}
+
 		return $this->page;
 	}
 
@@ -118,11 +123,8 @@ class Section implements AdminItemInterface {
 	 *
 	 * @return Section
 	 */
-	public function setPage( $page = 'general' ) {
-		if ( $this->isEmpty( $page = strval( $page ) ) ) {
-			$page = 'general';
-		}
-		$this->page = $page;
+	public function setPage( string $page = 'general' ): Section {
+		$this->page = strval( $page );
 
 		return $this;
 	}
@@ -130,7 +132,7 @@ class Section implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getTitle() {
+	public function getTitle(): string {
 		return $this->title;
 	}
 
@@ -139,7 +141,7 @@ class Section implements AdminItemInterface {
 	 *
 	 * @return Section
 	 */
-	public function setTitle( $title = '' ) {
+	public function setTitle( string $title = '' ): Section {
 		$this->title = trim( strval( $title ) );
 
 		return $this;
@@ -148,7 +150,7 @@ class Section implements AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getDescription() {
+	public function getDescription(): string {
 		return $this->description;
 	}
 
@@ -157,29 +159,30 @@ class Section implements AdminItemInterface {
 	 *
 	 * @return Section
 	 */
-	public function setDescription( $description = '' ) {
+	public function setDescription( string $description = '' ): Section {
 		$this->description = trim( strval( $description ) );
 
 		return $this;
 	}
 
 	/**
-	 * @return callable
+	 * @return \Closure|callable|string|array
 	 */
 	public function getCallback() {
+		if ( !$this->is_callable_or_closure( $this->callback ) ) {
+			$this->setCallback( array( $this, 'display' ) );
+		}
+
 		return $this->callback;
 	}
 
 	/**
-	 * @param callable $callback
+	 * @param \Closure|callable|string|array|null $callback
 	 *
 	 * @return Section
 	 */
-	public function setCallback( $callback = null ) {
-		if ( ! is_callable( $callback ) ) {
-			$callback = array( $this, 'display' );
-		}
-		$this->callback = $callback;
+	public function setCallback( $callback = null ): Section {
+		$this->callback = $this->is_callable_or_closure( $callback ) ? $callback : null;
 
 		return $this;
 	}
@@ -188,8 +191,8 @@ class Section implements AdminItemInterface {
 	 * @return array|\SergeLiatko\WPSettings\Setting[]
 	 * @noinspection PhpUnused
 	 */
-	public function getSettings() {
-		if ( ! is_array( $this->settings ) ) {
+	public function getSettings(): array {
+		if ( !is_array( $this->settings ) ) {
 			$this->setSettings( array() );
 		}
 
@@ -201,7 +204,7 @@ class Section implements AdminItemInterface {
 	 *
 	 * @return Section
 	 */
-	public function setSettings( array $settings = array() ) {
+	public function setSettings( array $settings = array() ): Section {
 		$this->settings = $this->instantiateItems(
 			$settings,
 			'\\SergeLiatko\\WPSettings\\Setting',
@@ -219,7 +222,7 @@ class Section implements AdminItemInterface {
 	 */
 	public function display() {
 		do_action( "before_setting_section-{$this->getId()}-{$this->getPage()}", $this );
-		if ( ! $this->isEmpty( $description = $this->getDescription() ) ) {
+		if ( !$this->isEmpty( $description = $this->getDescription() ) ) {
 			echo wpautop( $description );
 		}
 		do_action( "after_setting_section-{$this->getId()}-{$this->getPage()}", $this );
@@ -240,7 +243,7 @@ class Section implements AdminItemInterface {
 	/**
 	 * @return array Default parameters for \SergeLiatko\WPSettings\Section.
 	 */
-	public function getDefaultParameters() {
+	public function getDefaultParameters(): array {
 		return array(
 			'id'          => 'default',
 			'page'        => 'general',

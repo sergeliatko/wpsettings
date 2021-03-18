@@ -20,8 +20,8 @@ trait AdminItemHandler {
 	 *
 	 * @return bool
 	 */
-	protected function isNotEmptyArray( $item ) {
-		return ! empty( $item ) && is_array( $item );
+	protected function isNotEmptyArray( $item ): bool {
+		return !empty( $item ) && is_array( $item );
 	}
 
 	/**
@@ -31,7 +31,7 @@ trait AdminItemHandler {
 	 *
 	 * @return array|AdminItemInterface[]
 	 */
-	protected function mapIds( array $items ) {
+	protected function mapIds( array $items ): array {
 		$new_items = array();
 		foreach ( $items as $item ) {
 			if ( $item instanceof AdminItemInterface ) {
@@ -52,7 +52,7 @@ trait AdminItemHandler {
 	 * @return array|\SergeLiatko\WPSettings\Interfaces\AdminItemInterface[]
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	protected function instantiateItems( array $items, $class, array $defaults = array() ) {
+	protected function instantiateItems( array $items, string $class, array $defaults = array() ): array {
 		$items = array_filter( $items, array( $this, 'isNotEmptyArray' ) );
 		array_walk( $items, function ( &$item, $key, $defaults ) use ( $class ) {
 			$params = empty( $defaults ) ? $item : wp_parse_args( $item, $defaults );

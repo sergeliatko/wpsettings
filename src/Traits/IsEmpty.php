@@ -15,7 +15,7 @@ trait IsEmpty {
 	 *
 	 * @return bool
 	 */
-	protected function isEmpty( $data = null ) {
+	protected function isEmpty( $data = null ): bool {
 		return empty( $data );
 	}
 

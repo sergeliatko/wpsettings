@@ -56,7 +56,7 @@ class UI {
 	 * @return array|array[]|\SergeLiatko\WPSettings\Page[]
 	 * @noinspection PhpUnused
 	 */
-	public function getPages() {
+	public function getPages(): array {
 		return $this->pages;
 	}
 
@@ -65,7 +65,7 @@ class UI {
 	 *
 	 * @return UI
 	 */
-	public function setPages( array $pages ) {
+	public function setPages( array $pages ): UI {
 		$this->pages = $this->instantiateItems(
 			$pages,
 			'\\SergeLiatko\\WPSettings\\Page'
@@ -78,7 +78,7 @@ class UI {
 	 * @return array|array[]|\SergeLiatko\WPSettings\Section[]
 	 * @noinspection PhpUnused
 	 */
-	public function getSections() {
+	public function getSections(): array {
 		return $this->sections;
 	}
 
@@ -87,7 +87,7 @@ class UI {
 	 *
 	 * @return UI
 	 */
-	public function setSections( array $sections ) {
+	public function setSections( array $sections ): UI {
 		$this->sections = $this->instantiateItems(
 			$sections,
 			'\\SergeLiatko\\WPSettings\\Section'
@@ -100,7 +100,7 @@ class UI {
 	 * @return array|array[]|\SergeLiatko\WPSettings\Setting[]
 	 * @noinspection PhpUnused
 	 */
-	public function getSettings() {
+	public function getSettings(): array {
 		return $this->settings;
 	}
 
@@ -109,7 +109,7 @@ class UI {
 	 *
 	 * @return UI
 	 */
-	public function setSettings( array $settings ) {
+	public function setSettings( array $settings ): UI {
 		$this->settings = $this->instantiateItems(
 			$settings,
 			'\\SergeLiatko\\WPSettings\\Setting'
@@ -117,4 +117,5 @@ class UI {
 
 		return $this;
 	}
+
 }

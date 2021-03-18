@@ -268,24 +268,41 @@ Please use [get_option()](https://developer.wordpress.org/reference/functions/ge
 ## Documentation is on its way...
 While the full documentation is still in development, the code source has extensive comments and parameters descriptions to help you to get the idea of possibilities.
 
-I would be most appreciative of your contributions to the project documentation via README.md file edits as well as [posting your documentation suggestions to issues](https://github.com/sergeliatko/wpsettings/issues).
+I would be most appreciative of your contributions to the project documentation via README.md file edits as
+well as [posting your documentation suggestions to issues](https://github.com/sergeliatko/wpsettings/issues).
 
 ## Support WPSettings Financially
-Support WPSettings and help fund the project via the [GitHub Sponsorship Program](https://github.com/sponsors/sergeliatko). For a price of a cup of coffee, you can access to early updates and tips. If you're using the framework for your commercial projects, I recommend you choose a bigger contribution plan to obtain the feature voting power and/or my personal support via chat.
 
-Code review, product guidelines and consulting services are also available to help your product development. Feel free to [contact me](https://sergeliatko.com/?utm_source=github&utm_medium=repository-readme-file&utm_campaign=wpsettings) to discuss your project.
+Support WPSettings and help fund the project via
+the [GitHub Sponsorship Program](https://github.com/sponsors/sergeliatko). For a price of a cup of coffee, you
+can access to early updates and tips. If you're using the framework for your commercial projects, I recommend
+you choose a bigger contribution plan to obtain the feature voting power and/or my personal support via chat.
+
+Code review, product guidelines and consulting services are also available to help your product development.
+Feel free
+to [contact me](https://sergeliatko.com/?utm_source=github&utm_medium=repository-readme-file&utm_campaign=wpsettings)
+to discuss your project.
 
 Also, all the funds collected will be used to cover the expenses of the project documentation and promotion.
 
 ## About
+
+### Current version
+
+* 0.0.7
+
 ### Requirements
+
 * [PHP](https://www.php.net/) >= 5.6.0
 * [WordPress](https://wordpress.org/) >= 4.7
 * [sergeliatko/form-fields](https://github.com/sergeliatko/form-fields) >= 0.0.1
-* [sergeliatko/html](https://github.com/sergeliatko/html) >= 0.0.1 (required by [sergeliatko/form-fields](https://github.com/sergeliatko/form-fields))
+* [sergeliatko/html](https://github.com/sergeliatko/html) >= 0.0.1 (required
+  by [sergeliatko/form-fields](https://github.com/sergeliatko/form-fields))
 
 ### Feature requests, Questions, Support and Bug Reports
-Please submit your questions and requests in [GitHub Issues](https://github.com/sergeliatko/wpsettings/issues).
+
+Please submit your questions and requests in [GitHub Issues](https://github.com/sergeliatko/wpsettings/issues)
+.
 
 ### Licence
 WPSettings is licenced under GPL-3.0. See [LICENCE](https://github.com/sergeliatko/wpsettings/blob/master/LICENSE) file for details.
