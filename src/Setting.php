@@ -5,6 +5,7 @@ namespace SergeLiatko\WPSettings;
 
 use Exception;
 use SergeLiatko\FormFields\Checkboxes;
+use SergeLiatko\FormFields\Code;
 use SergeLiatko\FormFields\InputCheckbox;
 use SergeLiatko\FormFields\InputColor;
 use SergeLiatko\FormFields\InputDate;
@@ -601,7 +602,7 @@ class Setting implements AdminItemInterface {
 			case 'boolean':
 				// handle all strings but for "false" and "0" and not empty values as boolean true.
 				$value = is_string( $value ) ?
-					( in_array( strtolower( $value ), array( 'false', '0' ) ) ? false : true )
+					!in_array( strtolower( $value ), array( 'false', '0' ) )
 					: !empty( $value );
 				break;
 			case 'integer':
@@ -614,6 +615,9 @@ class Setting implements AdminItemInterface {
 				switch ( $this->getType() ) {
 					case 'textarea':
 						$value = sanitize_textarea_field( $value );
+						break;
+					case 'code':
+						$value = trim( strval( $value ) );
 						break;
 					case 'email':
 						$value = sanitize_email( $value );
@@ -664,6 +668,13 @@ class Setting implements AdminItemInterface {
 		switch ( $this->getType() ) {
 			case 'textarea':
 				echo Textarea::HTML( $this->getFieldArguments( $current, array(
+					'rows'  => 10,
+					'cols'  => 50,
+					'class' => 'large-text code',
+				) ) );
+				break;
+			case 'code':
+				echo Code::HTML( $this->getFieldArguments( $current, array(
 					'rows'  => 10,
 					'cols'  => 50,
 					'class' => 'large-text code',

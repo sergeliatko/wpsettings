@@ -24,8 +24,8 @@
     }
   ],
   "require": {
-    "php": ">=5.6.0",
-    "sergeliatko/form-fields": ">=0.0.1"
+    "php": ">=7.3",
+    "sergeliatko/form-fields": ">=1.0.6"
   },
   "autoload": {
     "psr-4": {
