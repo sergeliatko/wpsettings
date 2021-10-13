@@ -6,6 +6,7 @@ namespace SergeLiatko\WPSettings;
 use Exception;
 use SergeLiatko\FormFields\Checkboxes;
 use SergeLiatko\FormFields\Code;
+use SergeLiatko\FormFields\Editor;
 use SergeLiatko\FormFields\InputCheckbox;
 use SergeLiatko\FormFields\InputColor;
 use SergeLiatko\FormFields\InputDate;
@@ -617,6 +618,7 @@ class Setting implements AdminItemInterface {
 						$value = sanitize_textarea_field( $value );
 						break;
 					case 'code':
+					case 'editor':
 						$value = trim( strval( $value ) );
 						break;
 					case 'email':
@@ -679,6 +681,9 @@ class Setting implements AdminItemInterface {
 					'cols'  => 50,
 					'class' => 'large-text code',
 				) ) );
+				break;
+			case 'editor':
+				echo Editor::HTML( $this->getFieldArguments( $current ) );
 				break;
 			case 'text':
 				echo InputText::HTML( $this->getFieldArguments( $current, array(

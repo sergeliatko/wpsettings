@@ -25,7 +25,7 @@
   ],
   "require": {
     "php": ">=7.3",
-    "sergeliatko/form-fields": ">=1.0.6"
+    "sergeliatko/form-fields": ">=1.0.7"
   },
   "autoload": {
     "psr-4": {
