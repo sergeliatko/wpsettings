@@ -81,10 +81,9 @@ WPSettings Framework takes care of:
 - Adding setting fields to existing or your custom settings sections:
 	- text inputs (all common types: hidden, text, url, email, password, tel, number, range, date etc.).
 	- checkboxes (single and multiples) and radio buttons (again single and multiple).
-	- textareas.
+	- text areas.
 	- dropdowns (allows option groups as well).
 	- any custom coded field you want (you will be surprised just how flexible the framework is).
-	- WordPress text editors, pages and taxonomy terms dropdowns and color pickers are coming in the near future.
 - Adding descriptions to your custom settings sections and help messages to your setting fields.
 - Registration of your options in the WordPress database.
 - Sanitizing the user data input for most of the option types (you may use your own sanitize functions when needed).
@@ -289,14 +288,14 @@ Also, all the funds collected will be used to cover the expenses of the project 
 
 ### Current version
 
-* 0.0.7
+* 0.1
 
 ### Requirements
 
-* [PHP](https://www.php.net/) >= 5.6.0
+* [PHP](https://www.php.net/) >= 7.3
 * [WordPress](https://wordpress.org/) >= 4.7
-* [sergeliatko/form-fields](https://github.com/sergeliatko/form-fields) >= 0.0.1
-* [sergeliatko/html](https://github.com/sergeliatko/html) >= 0.0.1 (required
+* [sergeliatko/form-fields](https://github.com/sergeliatko/form-fields) >= 1.0.8
+* [sergeliatko/html](https://github.com/sergeliatko/html) >= 1.0.5 (required
   by [sergeliatko/form-fields](https://github.com/sergeliatko/form-fields))
 
 ### Feature requests, Questions, Support and Bug Reports
