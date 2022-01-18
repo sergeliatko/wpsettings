@@ -129,8 +129,7 @@ class Setting implements AdminItemInterface {
 	protected $input_attrs;
 
 	/**
-	 * @var array $choices Array of choices in setting UI (if applicable, eg. options in dropdown or a list of
-	 *      checkboxes).
+	 * @var array $choices Array of choices in setting UI (if applicable, e.g. options in dropdown or a list of checkboxes).
 	 *                     NOTE: array keys well be treated as LABELS and values as option values. If the value is an
 	 *                     array, it will treat it as a group of sub-options and use the key as a label for the group.
 	 */
@@ -168,11 +167,7 @@ class Setting implements AdminItemInterface {
 			EXTR_OVERWRITE
 		);
 		// throw an exception if the $option is empty
-		try {
-			$this->setOption( $option );
-		} catch ( Exception $exception ) {
-			throw $exception;
-		}
+		$this->setOption( $option );
 		$this->setId( $id );
 		$this->setLabel( $label );
 		$this->setHelp( $help );
@@ -303,7 +298,7 @@ class Setting implements AdminItemInterface {
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
 	public function setHelp( string $help = '' ): Setting {
-		$this->help = strval( $help );
+		$this->help = $help;
 
 		return $this;
 	}
@@ -325,7 +320,7 @@ class Setting implements AdminItemInterface {
 	 * @return \SergeLiatko\WPSettings\Setting
 	 */
 	public function setDescription( string $description = '' ): Setting {
-		$this->description = strval( $description );
+		$this->description = $description;
 
 		return $this;
 	}
@@ -529,7 +524,7 @@ class Setting implements AdminItemInterface {
 	 * @return bool
 	 */
 	public function isForceDefault(): bool {
-		return (bool) $this->force_default;
+		return $this->force_default;
 	}
 
 	/**
@@ -596,7 +591,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @param mixed $value
 	 *
-	 * @return mixed
+	 * @return array|bool|float|int|string|null
 	 */
 	public function sanitize( $value ) {
 		switch ( $this->getDataType() ) {
@@ -871,7 +866,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return array
 	 */
-	protected function getFieldArguments( $current, $input_attrs = array() ): array {
+	protected function getFieldArguments( $current, array $input_attrs = array() ): array {
 		return array(
 			'id'          => $this->getId(),
 			'input_attrs' => wp_parse_args(
@@ -935,7 +930,7 @@ class Setting implements AdminItemInterface {
 	 * @return array|object
 	 * @noinspection DuplicatedCode
 	 */
-	protected function parse_args_recursive( $args, $default, $preserve_integer_keys = false ) {
+	protected function parse_args_recursive( $args, $default, bool $preserve_integer_keys = false ) {
 		if ( !is_array( $default ) && !is_object( $default ) ) {
 			return wp_parse_args( $args, $default );
 		}
@@ -981,8 +976,8 @@ class Setting implements AdminItemInterface {
 			'type'              => 'text',
 			'data_type'         => '',
 			'show_in_rest'      => false,
-			'sanitize_callback' => array( $this, 'sanitize' ),
-			'display_callback'  => array( $this, 'display' ),
+			'sanitize_callback' => null,
+			'display_callback'  => null,
 			'display_args'      => array(),
 			'default'           => null,
 			'force_default'     => false,

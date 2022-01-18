@@ -56,7 +56,7 @@ class Section implements AdminItemInterface {
 	 *
 	 * @param array $args
 	 */
-	public function __construct( $args = array() ) {
+	public function __construct( array $args = array() ) {
 		/**
 		 * @var string   $id
 		 * @var string   $page
@@ -65,7 +65,7 @@ class Section implements AdminItemInterface {
 		 * @var callable $callback
 		 * @var array[]  $settings
 		 */
-		extract( wp_parse_args( (array) $args, $this->getDefaultParameters() ), EXTR_OVERWRITE );
+		extract( wp_parse_args( $args, $this->getDefaultParameters() ), EXTR_OVERWRITE );
 		$this->setId( $id );
 		$this->setPage( $page );
 		$this->setTitle( $title );
@@ -124,7 +124,7 @@ class Section implements AdminItemInterface {
 	 * @return Section
 	 */
 	public function setPage( string $page = 'general' ): Section {
-		$this->page = strval( $page );
+		$this->page = $page;
 
 		return $this;
 	}
@@ -142,7 +142,7 @@ class Section implements AdminItemInterface {
 	 * @return Section
 	 */
 	public function setTitle( string $title = '' ): Section {
-		$this->title = trim( strval( $title ) );
+		$this->title = trim( $title );
 
 		return $this;
 	}
@@ -160,7 +160,7 @@ class Section implements AdminItemInterface {
 	 * @return Section
 	 */
 	public function setDescription( string $description = '' ): Section {
-		$this->description = trim( strval( $description ) );
+		$this->description = trim( $description );
 
 		return $this;
 	}
@@ -249,7 +249,7 @@ class Section implements AdminItemInterface {
 			'page'        => 'general',
 			'title'       => '',
 			'description' => '',
-			'callback'    => array( $this, 'display' ),
+			'callback'    => null,
 			'settings'    => array(),
 		);
 	}

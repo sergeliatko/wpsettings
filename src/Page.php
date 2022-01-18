@@ -208,15 +208,15 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setHook( $hook = '' ): Page {
+	public function setHook( string $hook = '' ): Page {
 		if ( !empty( $hook ) ) {
 			//enqueue scripts if needed
 			if ( !$this->isEmpty( $this->getScripts() ) ) {
-				add_action( "load-{$hook}", array( $this, 'loadScripts' ), 10, 0 );
+				add_action( "load-$hook", array( $this, 'loadScripts' ), 10, 0 );
 			}
 			//display setting errors (and update message) if it is not in admin Settings submenu.
 			if ( 'options-general.php' !== $this->getParent() ) {
-				add_action( "admin_footer-{$hook}", 'settings_errors', 10, 0 );
+				add_action( "admin_footer-$hook", 'settings_errors', 10, 0 );
 			}
 		}
 		$this->hook = $hook;
@@ -296,7 +296,7 @@ class Page implements AdminItemInterface {
 	 * @return Page
 	 */
 	public function setDescription( string $description = '' ): Page {
-		$this->description = trim( strval( $description ) );
+		$this->description = trim( $description );
 
 		return $this;
 	}
@@ -335,8 +335,8 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setParent( $parent = '' ): Page {
-		$this->parent = trim( strval( $parent ) );
+	public function setParent( string $parent = '' ): Page {
+		$this->parent = trim( $parent );
 
 		return $this;
 	}
@@ -354,7 +354,7 @@ class Page implements AdminItemInterface {
 	 * @return Page
 	 */
 	public function setPosition( ?int $position = null ): Page {
-		$this->position = is_null( $position ) ? $position : intval( $position );
+		$this->position = is_null( $position ) ? $position : absint( $position );
 
 		return $this;
 	}
@@ -372,7 +372,7 @@ class Page implements AdminItemInterface {
 	 * @return Page
 	 */
 	public function setIcon( string $icon = '' ): Page {
-		$this->icon = trim( strval( $icon ) );
+		$this->icon = trim( $icon );
 
 		return $this;
 	}
@@ -441,7 +441,6 @@ class Page implements AdminItemInterface {
 	 * @param array[]|string[] $scripts
 	 *
 	 * @return Page
-	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function setScripts( array $scripts ): Page {
 		array_walk( $scripts, function ( &$script, $order, $defaults ) {
@@ -490,11 +489,11 @@ class Page implements AdminItemInterface {
 		if ( !$this->isEmpty( $description = $this->getDescription() ) ) {
 			echo wpautop( $description );
 		}
-		do_action( "before_setting_sections-{$slug}", $this );
+		do_action( "before_setting_sections-$slug", $this );
 		settings_fields( $slug );
 		do_settings_sections( $slug );
 		submit_button();
-		do_action( "after_setting_sections-{$slug}", $this );
+		do_action( "after_setting_sections-$slug", $this );
 		echo '</form></div>';
 	}
 
@@ -547,13 +546,13 @@ class Page implements AdminItemInterface {
 					$script['in_footer']
 				);
 				//@developers: hook your wp_localize_script() functions here to localize the enqueued script
-				do_action( "admin_enqueued_script-{$handle}", $this );
+				do_action( "admin_enqueued_script-$handle", $this );
 			} else {
 				if ( is_string( $script ) ) {
 					$handle = $script;
 					wp_enqueue_script( $handle );
 					//@developers: hook your wp_localize_script() functions here to localize the enqueued script
-					do_action( "admin_enqueued_script-{$handle}", $this );
+					do_action( "admin_enqueued_script-$handle", $this );
 				}
 			}
 		}
@@ -574,7 +573,7 @@ class Page implements AdminItemInterface {
 			'parent'      => '',
 			'position'    => null,
 			'icon'        => '',
-			'callback'    => array( $this, 'display' ),
+			'callback'    => null,
 			'sections'    => array(),
 			'scripts'     => array(),
 		);
