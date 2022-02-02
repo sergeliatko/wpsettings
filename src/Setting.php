@@ -703,6 +703,7 @@ class Setting implements AdminItemInterface {
 				echo Select::HTML( $this->getFieldArguments( $current ) );
 				break;
 			case 'number':
+			case 'integer':
 				echo InputNumber::HTML( $this->getFieldArguments( $current, array(
 					'class' => 'small-text code',
 				) ) );
