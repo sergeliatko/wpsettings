@@ -50,7 +50,6 @@ trait AdminItemHandler {
 	 * @param array         $defaults Array of default parameters to provide for the instance.
 	 *
 	 * @return array|\SergeLiatko\WPSettings\Interfaces\AdminItemInterface[]
-	 * @noinspection PhpUnusedParameterInspection
 	 */
 	protected function instantiateItems( array $items, string $class, array $defaults = array() ): array {
 		$items = array_filter( $items, array( $this, 'isNotEmptyArray' ) );

@@ -35,7 +35,6 @@ spl_autoload_register( function ( $class ) {
 			        )
 		        ) . '.php'
 	) ) {
-		/** @noinspection PhpIncludeInspection */
 		include $file;
 	}
 } );
