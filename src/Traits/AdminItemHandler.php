@@ -5,6 +5,8 @@ namespace SergeLiatko\WPSettings\Traits;
 
 
 use SergeLiatko\WPSettings\Interfaces\AdminItemInterface;
+use Throwable;
+use WP_Exception;
 
 /**
  * Trait AdminItemHandler
@@ -21,7 +23,7 @@ trait AdminItemHandler {
 	 * @return bool
 	 */
 	protected function isNotEmptyArray( mixed $item ): bool {
-		return !empty( $item ) && is_array( $item );
+		return is_array( $item ) && ! empty( $item );
 	}
 
 	/**
@@ -45,22 +47,35 @@ trait AdminItemHandler {
 	/**
 	 * Instantiates items implementing AdminItemInterface based on their parameters. Maps the keys to IDs.
 	 *
-	 * @param array|array[] $items    Array of parameter arrays to use for AdminItemInterface instances.
-	 * @param string        $class    Name of the class to create. Must implement the AdminItemInterface.
-	 * @param array         $defaults Array of default parameters to provide for the instance.
+	 * @param array|array[] $items Array of parameter arrays to use for AdminItemInterface instances.
+	 * @param string $class Name of the class to create. Must implement the AdminItemInterface.
+	 * @param array $defaults Array of default parameters to provide for the instance.
 	 *
 	 * @return array|AdminItemInterface[]
+	 * @throws WP_Exception When instantiation of an item fails.
 	 */
 	protected function instantiateItems( array $items, string $class, array $defaults = array() ): array {
 		$items = array_filter( $items, array( $this, 'isNotEmptyArray' ) );
 		array_walk( $items, function ( &$item, $key, $defaults ) use ( $class ) {
-			$params = empty( $defaults ) ? $item : wp_parse_args( $item, $defaults );
-			$item   = is_callable( $factory = array( $class, 'createInstance' ) ) ?
-				call_user_func( $factory, $params )
-				: null;
+			try {
+				$params = empty( $defaults ) ? $item : wp_parse_args( $item, $defaults );
+				$item   = method_exists( $class, 'createInstance' ) ?
+					$class::createInstance( $params ) :
+					null;
+			} catch ( Throwable $e ) {
+				$item = null;
+				// add debug log
+				wp_trigger_error(
+					__METHOD__,
+					sprintf( "Error creating instance of %s: %s\n", $class, $e->getMessage() )
+				);
+			}
 		}, $defaults );
 
-		return $this->mapIds( $items );
+		return $this->mapIds( array_filter(
+			$items,
+			fn( mixed $item ) => $item instanceof AdminItemInterface
+		) );
 	}
 
 }

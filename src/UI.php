@@ -5,6 +5,7 @@ namespace SergeLiatko\WPSettings;
 
 
 use SergeLiatko\WPSettings\Traits\AdminItemHandler;
+use WP_Exception;
 
 /**
  * Class UI
@@ -34,6 +35,10 @@ class UI {
 	 * UI constructor.
 	 *
 	 * @param array $params
+	 *
+	 * @throws WP_Exception When instantiation of a page fails.
+	 * @throws WP_Exception When instantiation of a section fails.
+	 * @throws WP_Exception When instantiation of a setting fails.
 	 */
 	public function __construct( array $params ) {
 
@@ -64,6 +69,7 @@ class UI {
 	 * @param array|array[] $pages
 	 *
 	 * @return UI
+	 * @throws WP_Exception When instantiation of a page fails.
 	 */
 	public function setPages( array $pages ): UI {
 		$this->pages = $this->instantiateItems(
@@ -86,6 +92,7 @@ class UI {
 	 * @param array|array[] $sections
 	 *
 	 * @return UI
+	 * @throws WP_Exception When instantiation of a section fails.
 	 */
 	public function setSections( array $sections ): UI {
 		$this->sections = $this->instantiateItems(
@@ -108,6 +115,7 @@ class UI {
 	 * @param array|array[] $settings
 	 *
 	 * @return UI
+	 * @throws WP_Exception When instantiation of a setting fails.
 	 */
 	public function setSettings( array $settings ): UI {
 		$this->settings = $this->instantiateItems(

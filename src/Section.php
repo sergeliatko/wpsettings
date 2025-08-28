@@ -8,6 +8,7 @@ use SergeLiatko\WPSettings\Interfaces\AdminItemInterface;
 use SergeLiatko\WPSettings\Traits\AdminItemHandler;
 use SergeLiatko\WPSettings\Traits\IsCallableOrClosure;
 use SergeLiatko\WPSettings\Traits\IsEmpty;
+use WP_Exception;
 
 /**
  * Class Section
@@ -182,7 +183,7 @@ class Section implements AdminItemInterface {
 	 *
 	 * @return Section
 	 */
-	public function setCallback( callable|array|string|Closure $callback = null ): Section {
+	public function setCallback( callable|array|string|Closure|null $callback = null ): Section {
 		$this->callback = $this->is_callable_or_closure( $callback ) ? $callback : null;
 
 		return $this;
@@ -204,6 +205,7 @@ class Section implements AdminItemInterface {
 	 * @param array[] $settings
 	 *
 	 * @return Section
+	 * @throws WP_Exception When instantiation of a setting fails.
 	 */
 	public function setSettings( array $settings = array() ): Section {
 		$this->settings = $this->instantiateItems(

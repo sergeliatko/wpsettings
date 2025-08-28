@@ -8,6 +8,7 @@ use SergeLiatko\WPSettings\Interfaces\AdminItemInterface;
 use SergeLiatko\WPSettings\Traits\AdminItemHandler;
 use SergeLiatko\WPSettings\Traits\IsCallableOrClosure;
 use SergeLiatko\WPSettings\Traits\IsEmpty;
+use WP_Exception;
 
 /**
  * Class Page
@@ -155,6 +156,8 @@ class Page implements AdminItemInterface {
 	 * Page constructor.
 	 *
 	 * @param array $params
+	 *
+	 * @throws WP_Exception When instantiation of a section fails.
 	 */
 	public function __construct( array $params ) {
 		/**
@@ -209,7 +212,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setHook( string $hook = '' ): Page {
+	public function setHook( string $hook = '' ): static {
 		if ( ! empty( $hook ) ) {
 			//enqueue scripts if needed
 			if ( ! $this->isEmpty( $this->getScripts() ) ) {
@@ -238,7 +241,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setSlug( string $slug ): Page {
+	public function setSlug( string $slug ): static {
 		$this->slug = sanitize_key( $slug );
 
 		return $this;
@@ -256,7 +259,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setLabel( string $label ): Page {
+	public function setLabel( string $label ): static {
 		$this->label = sanitize_text_field( $label );
 
 		return $this;
@@ -278,7 +281,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setTitle( string $title = '' ): Page {
+	public function setTitle( string $title = '' ): static {
 		$this->title = sanitize_text_field( $title );
 
 		return $this;
@@ -296,7 +299,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setDescription( string $description = '' ): Page {
+	public function setDescription( string $description = '' ): static {
 		$this->description = trim( $description );
 
 		return $this;
@@ -318,7 +321,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setCapability( string $capability = 'manage_options' ): Page {
+	public function setCapability( string $capability = 'manage_options' ): static {
 		$this->capability = sanitize_key( $capability );
 
 		return $this;
@@ -336,7 +339,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setParent( string $parent = '' ): Page {
+	public function setParent( string $parent = '' ): static {
 		$this->parent = trim( $parent );
 
 		return $this;
@@ -354,7 +357,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setPosition( ?int $position = null ): Page {
+	public function setPosition( ?int $position = null ): static {
 		$this->position = is_null( $position ) ? $position : absint( $position );
 
 		return $this;
@@ -372,7 +375,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setIcon( string $icon = '' ): Page {
+	public function setIcon( string $icon = '' ): static {
 		$this->icon = trim( $icon );
 
 		return $this;
@@ -394,7 +397,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setCallback( callable|array|string|Closure|null $callback ): Page {
+	public function setCallback( callable|array|string|Closure|null $callback ): static {
 		$this->callback = $this->is_callable_or_closure( $callback ) ? $callback : null;
 
 		return $this;
@@ -403,6 +406,7 @@ class Page implements AdminItemInterface {
 	/**
 	 * @return array|Section[]
 	 * @noinspection PhpUnused
+	 * @throws WP_Exception When instantiation of a section fails.
 	 */
 	public function getSections(): array {
 		if ( ! is_array( $this->sections ) ) {
@@ -416,8 +420,9 @@ class Page implements AdminItemInterface {
 	 * @param array[] $sections
 	 *
 	 * @return Page
+	 * @throws WP_Exception When instantiation of a section fails.
 	 */
-	public function setSections( array $sections = array() ): Page {
+	public function setSections( array $sections = array() ): static {
 		$this->sections = $this->instantiateItems(
 			$sections,
 			'\\SergeLiatko\\WPSettings\\Section',
@@ -443,7 +448,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @return Page
 	 */
-	public function setScripts( array $scripts ): Page {
+	public function setScripts( array $scripts ): static {
 		array_walk( $scripts, function ( &$script, $order, $defaults ) {
 			if ( is_array( $script ) ) {
 				$script = wp_parse_args( $script, $defaults );
