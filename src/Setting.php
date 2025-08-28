@@ -3,6 +3,7 @@
 
 namespace SergeLiatko\WPSettings;
 
+use Closure;
 use Exception;
 use SergeLiatko\FormFields\Checkboxes;
 use SergeLiatko\FormFields\Code;
@@ -48,123 +49,122 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @var string $id Setting field id (Optional, if empty, will be generated from $option).
 	 */
-	protected $id;
+	protected string $id;
 
 	/**
 	 * @var string $option Setting option name in the database.
 	 */
-	protected $option;
+	protected string $option;
 
 	/**
 	 * @var string $label Setting label in WP UI.
 	 */
-	protected $label;
+	protected string $label;
 
 	/**
 	 * @var string $help Setting help message in WP UI.
 	 */
-	protected $help;
+	protected string $help;
 
 	/**
 	 * @var string $description Setting option description in REST API.
 	 */
-	protected $description;
+	protected string $description;
 
 	/**
 	 * @var string $page Settings page (option group) the setting is to be displayed on.
 	 */
-	protected $page;
+	protected string $page;
 
 	/**
 	 * @var string $section Settings section the setting is to be displayed in.
 	 */
-	protected $section;
+	protected string $section;
 
 	/**
 	 * @var string $type Setting type. Defines how setting is displayed in WP UI and option data type in REST.
 	 */
-	protected $type;
+	protected string $type;
 
 	/**
 	 * @var string $data_type Overwrites the option data type in REST set by $type.
 	 */
-	protected $data_type;
+	protected string $data_type;
 
 	/**
 	 * @var bool|array $show_in_rest Whether data associated with this setting should be included in the REST API.
 	 *                               When registering complex settings, this argument may optionally be an array with a
 	 *                               'schema' key.
 	 */
-	protected $show_in_rest;
+	protected array|bool $show_in_rest;
 
 	/**
-	 * @var \Closure|callable|string|array|null $sanitize_callback A callback function that sanitizes the option's value.
+	 * @var Closure|callable|string|array|null $sanitize_callback A callback function that sanitizes the option's value.
 	 */
 	protected $sanitize_callback;
 
 	/**
-	 * @var \Closure|callable|string|array|null $display_callback A callback function that displays the setting in WP UI.
+	 * @var Closure|callable|string|array|null $display_callback A callback function that displays the setting in WP UI.
 	 */
 	protected $display_callback;
 
 	/**
-	 * @var array $display_args Array of arguments passed to the display function.
+	 * @var array|null $display_args Array of arguments passed to the display function.
 	 */
-	protected $display_args;
+	protected ?array $display_args = null;
 
 	/**
 	 * @var mixed $default Default option value.
 	 */
-	protected $default;
+	protected mixed $default;
 
 	/**
 	 * @var bool $force_default Flag to force the default value returned by get_option() if option value is empty in
 	 *      database.
 	 */
-	protected $force_default;
+	protected bool $force_default;
 
 	/**
-	 * @var array $input_attrs Array of setting field HTML attributes.
+	 * @var array|null $input_attrs Array of setting field HTML attributes.
 	 */
-	protected $input_attrs;
+	protected ?array $input_attrs = null;
 
 	/**
-	 * @var array $choices Array of choices in setting UI (if applicable, e.g. options in dropdown or a list of checkboxes).
+	 * @var array|null $choices Array of choices in setting UI (if applicable, e.g. options in dropdown or a list of checkboxes).
 	 *                     NOTE: array keys well be treated as LABELS and values as option values. If the value is an
 	 *                     array, it will treat it as a group of sub-options and use the key as a label for the group.
 	 */
-	protected $choices;
+	protected ?array $choices = null;
 
 	/**
 	 * Setting constructor.
 	 *
 	 * @param array $args
 	 *
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function __construct( array $args ) {
 		/**
-		 * @var string     $id
-		 * @var string     $option
-		 * @var string     $label
-		 * @var string     $help
-		 * @var string     $description
-		 * @var string     $page
-		 * @var string     $section
-		 * @var string     $type
-		 * @var string     $data_type
+		 * @var string $id
+		 * @var string $option
+		 * @var string $label
+		 * @var string $help
+		 * @var string $description
+		 * @var string $page
+		 * @var string $section
+		 * @var string $type
+		 * @var string $data_type
 		 * @var bool|array $show_in_rest
-		 * @var callable   $sanitize_callback
-		 * @var callable   $display_callback
-		 * @var array      $display_args
-		 * @var mixed      $default
-		 * @var bool       $force_default
-		 * @var array      $input_attrs
-		 * @var array      $choices
+		 * @var callable $sanitize_callback
+		 * @var callable $display_callback
+		 * @var array $display_args
+		 * @var mixed $default
+		 * @var bool $force_default
+		 * @var array $input_attrs
+		 * @var array $choices
 		 */
 		extract(
-			$this->parse_args_recursive( $args, $this->getDefaultParameters() ),
-			EXTR_OVERWRITE
+			$this->parse_args_recursive( $args, $this->getDefaultParameters() )
 		);
 		// throw an exception if the $option is empty
 		$this->setOption( $option );
@@ -188,21 +188,21 @@ class Setting implements AdminItemInterface {
 		if ( self::NOT_OPTION !== $this->getType() ) {
 			// register setting in admin and rest
 			add_action( 'admin_init', array( $this, 'register' ), 10, 0 );
-			if ( !$this->isEmpty( $this->getShowInRest() ) ) {
+			if ( ! $this->isEmpty( $this->getShowInRest() ) ) {
 				add_action( 'rest_api_init', array( $this, 'register' ), 10, 0 );
 			}
 			// handle default value
-			if ( !is_null( $this->getDefault() ) ) {
+			if ( ! is_null( $this->getDefault() ) ) {
 				//make sure the default option value is not saved to database (default value is defined in the source code)
 				add_action( "update_option_{$this->getOption()}", array( $this, 'doNotUpdateDefault' ), 10, 2 );
 				add_action( "add_option_{$this->getOption()}", array( $this, 'doNotAddDefault' ), 10, 2 );
 				//make sure the default value is also provided on the front end
-				if ( !is_admin() ) {
+				if ( ! is_admin() ) {
 					add_filter( "default_option_{$this->getOption()}", array( $this, 'filterDefaultOption' ), 10, 3 );
 				}
 				if ( $this->isForceDefault() ) {
 					//make sure the default value is returned if the option value is empty and $force_default is true
-					add_filter( "option_{$this->getOption()}", array( $this, 'forceDefault' ), 10, 1 );
+					add_filter( "option_{$this->getOption()}", array( $this, 'forceDefault' ) );
 					//make sure no empty value is saved to database when $force_default
 					add_action( "update_option_{$this->getOption()}", array( $this, 'doNotUpdateEmpty' ), 10, 2 );
 					add_action( "add_option_{$this->getOption()}", array( $this, 'doNotAddEmpty' ), 10, 2 );
@@ -216,9 +216,9 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @param array $params
 	 *
-	 * @return object|\SergeLiatko\WPSettings\Interfaces\AdminItemInterface
+	 * @return Setting
 	 */
-	public static function createInstance( array $params ) {
+	public static function createInstance( array $params ): static {
 		return Factory::createItem( $params, __CLASS__ );
 	}
 
@@ -236,7 +236,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @param string $id
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
 	public function setId( string $id = '' ): Setting {
 		$this->id = sanitize_key( $id );
@@ -254,9 +254,9 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @param string $option
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 *
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function setOption( string $option ): Setting {
 		if ( $this->isEmpty( $option = sanitize_key( $option ) ) ) {
@@ -277,7 +277,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @param string $label
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
 	public function setLabel( string $label = '' ): Setting {
 		$this->label = sanitize_text_field( $label );
@@ -295,7 +295,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @param string $help
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
 	public function setHelp( string $help = '' ): Setting {
 		$this->help = $help;
@@ -317,7 +317,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @param string $description
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
 	public function setDescription( string $description = '' ): Setting {
 		$this->description = $description;
@@ -339,7 +339,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @param string $page
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
 	public function setPage( string $page = 'general' ): Setting {
 		$this->page = $page;
@@ -361,7 +361,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @param string $section
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
 	public function setSection( string $section = 'default' ): Setting {
 		$this->section = $section;
@@ -383,7 +383,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @param string $type
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
 	public function setType( string $type = 'text' ): Setting {
 		$this->type = sanitize_key( $type );
@@ -405,7 +405,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @param string $data_type
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
 	public function setDataType( string $data_type = '' ): Setting {
 		$this->data_type = sanitize_key( $data_type );
@@ -416,26 +416,26 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return array|bool
 	 */
-	public function getShowInRest() {
+	public function getShowInRest(): bool|array {
 		return $this->show_in_rest;
 	}
 
 	/**
-	 * @param array|bool $show_in_rest
+	 * @param bool|array $show_in_rest
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
-	public function setShowInRest( $show_in_rest ): Setting {
+	public function setShowInRest( bool|array $show_in_rest ): Setting {
 		$this->show_in_rest = $show_in_rest;
 
 		return $this;
 	}
 
 	/**
-	 * @return \Closure|callable|string|array
+	 * @return Closure|callable|string|array
 	 */
-	public function getSanitizeCallback() {
-		if ( !$this->is_callable_or_closure( $this->sanitize_callback ) ) {
+	public function getSanitizeCallback(): callable|array|Closure|string {
+		if ( ! $this->is_callable_or_closure( $this->sanitize_callback ) ) {
 			$this->setSanitizeCallback( array( $this, 'sanitize' ) );
 		}
 
@@ -443,21 +443,21 @@ class Setting implements AdminItemInterface {
 	}
 
 	/**
-	 * @param \Closure|callable|string|array|null $sanitize_callback
+	 * @param callable|array|string|Closure|null $sanitize_callback
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
-	public function setSanitizeCallback( $sanitize_callback ): Setting {
+	public function setSanitizeCallback( callable|array|string|Closure|null $sanitize_callback ): Setting {
 		$this->sanitize_callback = $this->is_callable_or_closure( $sanitize_callback ) ? $sanitize_callback : null;
 
 		return $this;
 	}
 
 	/**
-	 * @return \Closure|callable|string|array
+	 * @return Closure|callable|string|array
 	 */
-	public function getDisplayCallback() {
-		if ( !$this->is_callable_or_closure( $this->display_callback ) ) {
+	public function getDisplayCallback(): callable|array|Closure|string {
+		if ( ! $this->is_callable_or_closure( $this->display_callback ) ) {
 			$this->setDisplayCallback( array( $this, 'display' ) );
 		}
 
@@ -465,11 +465,11 @@ class Setting implements AdminItemInterface {
 	}
 
 	/**
-	 * @param \Closure|callable|string|array|null $display_callback
+	 * @param callable|array|string|Closure|null $display_callback
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
-	public function setDisplayCallback( $display_callback ): Setting {
+	public function setDisplayCallback( callable|array|string|Closure|null $display_callback ): Setting {
 		$this->display_callback = $this->is_callable_or_closure( $display_callback ) ? $display_callback : null;
 
 		return $this;
@@ -479,8 +479,8 @@ class Setting implements AdminItemInterface {
 	 * @return array
 	 */
 	public function getDisplayArgs(): array {
-		if ( !is_array( $this->display_args ) ) {
-			$this->setDisplayArgs( array() );
+		if ( ! is_array( $this->display_args ) ) {
+			$this->setDisplayArgs();
 		}
 
 		return $this->display_args;
@@ -489,7 +489,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @param array $display_args
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
 	public function setDisplayArgs( array $display_args = array() ): Setting {
 		$this->display_args = wp_parse_args(
@@ -505,16 +505,16 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @return mixed
 	 */
-	public function getDefault() {
+	public function getDefault(): mixed {
 		return $this->default;
 	}
 
 	/**
 	 * @param mixed|null $default
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
-	public function setDefault( $default = null ): Setting {
+	public function setDefault( mixed $default = null ): Setting {
 		$this->default = $default;
 
 		return $this;
@@ -530,10 +530,10 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @param bool $force_default
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
 	public function setForceDefault( bool $force_default = false ): Setting {
-		$this->force_default = !empty( $force_default );
+		$this->force_default = ! empty( $force_default );
 
 		return $this;
 	}
@@ -542,7 +542,7 @@ class Setting implements AdminItemInterface {
 	 * @return array
 	 */
 	public function getInputAttrs(): array {
-		if ( !is_array( $this->input_attrs ) ) {
+		if ( ! is_array( $this->input_attrs ) ) {
 			$this->setInputAttrs();
 		}
 
@@ -552,7 +552,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @param array $input_attrs
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
 	public function setInputAttrs( array $input_attrs = array() ): Setting {
 		$this->input_attrs = wp_parse_args(
@@ -570,7 +570,7 @@ class Setting implements AdminItemInterface {
 	 * @return array
 	 */
 	public function getChoices(): array {
-		if ( !is_array( $this->choices ) ) {
+		if ( ! is_array( $this->choices ) ) {
 			$this->setChoices( array() );
 		}
 
@@ -580,7 +580,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * @param array $choices
 	 *
-	 * @return \SergeLiatko\WPSettings\Setting
+	 * @return Setting
 	 */
 	public function setChoices( array $choices ): Setting {
 		$this->choices = $choices;
@@ -593,74 +593,30 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return array|bool|float|int|string|null
 	 */
-	public function sanitize( $value ) {
-		switch ( $this->getDataType() ) {
-			case 'boolean':
-				// handle all strings but for "false" and "0" and not empty values as boolean true.
-				$value = is_string( $value ) ?
-					!in_array( strtolower( $value ), array( 'false', '0' ) )
-					: !empty( $value );
-				break;
-			case 'integer':
-				$value = intval( $value );
-				break;
-			case 'number':
-				$value = floatval( $value );
-				break;
-			case 'string':
-				switch ( $this->getType() ) {
-					case 'textarea':
-						$value = sanitize_textarea_field( $value );
-						break;
-					case 'code':
-					case 'editor':
-						$value = trim( strval( $value ) );
-						break;
-					case 'email':
-						$value = sanitize_email( $value );
-						break;
-					case 'url':
-						$value = esc_url_raw( $value );
-						break;
-					case 'checkboxes':
-					case 'radios':
-						$value = array_map( 'sanitize_text_field', (array) $value );
-						break;
-					case 'hidden':
-					case 'text':
-					case 'checkbox':
-					case 'radio':
-					case 'password':
-					case 'tel':
-					case 'color':
-					case 'date': #todo: separate sanitize
-					case 'date-time-local': #todo: separate sanitize
-					case 'time': #todo separate sanitize
-					case 'number': #prefer data type parameter over type - sanitize as string value
-					case 'range': #prefer data type parameter over type - sanitize as string value
-					case 'select':
-					default:
-						$value = sanitize_text_field( $value );
-						break;
-				}
-				break;
-			//todo: implement sanitize for objects and arrays based on schema
-			case 'array':
-				$value = array_filter( (array) $value );
-				break;
-			default:
-				// sanitize as text field by default
-				$value = sanitize_text_field( $value );
-				break;
-		}
-
-		return $value;
+	public function sanitize( mixed $value ): float|int|bool|array|string|null {
+		return match ( $this->getDataType() ) {
+			'boolean' => is_string( $value ) ?
+				! in_array( strtolower( $value ), array( 'false', '0' ) )
+				: ! empty( $value ),
+			'integer' => intval( $value ),
+			'number' => floatval( $value ),
+			'string' => match ( $this->getType() ) {
+				'textarea' => sanitize_textarea_field( $value ),
+				'code', 'editor' => trim( strval( $value ) ),
+				'email' => sanitize_email( $value ),
+				'url' => esc_url_raw( $value ),
+				'checkboxes', 'radios' => array_map( 'sanitize_text_field', (array) $value ),
+				default => sanitize_text_field( $value ),
+			},
+			'array' => array_filter( (array) $value ),
+			default => sanitize_text_field( $value ),
+		};
 	}
 
 	/**
 	 * Displays setting field in WP UI.
 	 */
-	public function display() {
+	public function display(): void {
 		$current = get_option( $this->getOption(), $this->getDefault() );
 		switch ( $this->getType() ) {
 			case 'textarea':
@@ -763,19 +719,19 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return mixed
 	 */
-	public function forceDefault( $value ) {
+	public function forceDefault( mixed $value ): mixed {
 		return empty( $value ) ? $this->getDefault() : $value;
 	}
 
 	/**
-	 * @param mixed  $default
+	 * @param mixed $default
 	 * @param string $option
-	 * @param bool   $passed_default
+	 * @param bool $passed_default
 	 *
 	 * @return mixed
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function filterDefaultOption( $default, string $option, bool $passed_default ) {
+	public function filterDefaultOption( mixed $default, string $option, bool $passed_default ): mixed {
 		if ( $passed_default ) {
 			return $default;
 		}
@@ -786,7 +742,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * Adds setting field to WP UI.
 	 */
-	public function addSettingField() {
+	public function addSettingField(): void {
 		add_settings_field(
 			$this->getId(),
 			$this->getLabel(),
@@ -800,7 +756,7 @@ class Setting implements AdminItemInterface {
 	/**
 	 * Registers setting in WP.
 	 */
-	public function register() {
+	public function register(): void {
 		register_setting(
 			$this->getPage(),
 			$this->getOption(),
@@ -819,7 +775,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function doNotUpdateDefault( $old_value, $new_value ) {
+	public function doNotUpdateDefault( mixed $old_value, mixed $new_value ): void {
 		if ( $this->getDefault() == $new_value ) {
 			delete_option( $this->getOption() );
 		}
@@ -827,11 +783,11 @@ class Setting implements AdminItemInterface {
 
 	/**
 	 * @param string $option
-	 * @param mixed  $new_value
+	 * @param mixed $new_value
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function doNotAddDefault( string $option, $new_value ) {
+	public function doNotAddDefault( string $option, mixed $new_value ): void {
 		if ( $this->getDefault() == $new_value ) {
 			delete_option( $this->getOption() );
 		}
@@ -843,7 +799,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function doNotUpdateEmpty( $old_value, $new_value ) {
+	public function doNotUpdateEmpty( mixed $old_value, mixed $new_value ): void {
 		if ( $this->isForceDefault() && empty( $new_value ) ) {
 			delete_option( $this->getOption() );
 		}
@@ -851,11 +807,11 @@ class Setting implements AdminItemInterface {
 
 	/**
 	 * @param string $option
-	 * @param mixed  $new_value
+	 * @param mixed $new_value
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function doNotAddEmpty( string $option, $new_value ) {
+	public function doNotAddEmpty( string $option, mixed $new_value ): void {
 		if ( $this->isForceDefault() && empty( $new_value ) ) {
 			delete_option( $this->getOption() );
 		}
@@ -867,7 +823,7 @@ class Setting implements AdminItemInterface {
 	 *
 	 * @return array
 	 */
-	protected function getFieldArguments( $current, array $input_attrs = array() ): array {
+	protected function getFieldArguments( mixed $current, array $input_attrs = array() ): array {
 		return array(
 			'id'          => $this->getId(),
 			'input_attrs' => wp_parse_args(
@@ -924,15 +880,15 @@ class Setting implements AdminItemInterface {
 	}
 
 	/**
-	 * @param array|object $args
-	 * @param array|object $default
-	 * @param bool         $preserve_integer_keys
+	 * @param object|array $args
+	 * @param object|array $default
+	 * @param bool $preserve_integer_keys
 	 *
 	 * @return array|object
 	 * @noinspection DuplicatedCode
 	 */
-	protected function parse_args_recursive( $args, $default, bool $preserve_integer_keys = false ) {
-		if ( !is_array( $default ) && !is_object( $default ) ) {
+	protected function parse_args_recursive( object|array $args, object|array $default, bool $preserve_integer_keys = false ): object|array {
+		if ( ! is_array( $default ) && ! is_object( $default ) ) {
 			return wp_parse_args( $args, $default );
 		}
 
@@ -941,7 +897,7 @@ class Setting implements AdminItemInterface {
 
 		foreach ( array( $default, $args ) as $elements ) {
 			foreach ( (array) $elements as $key => $element ) {
-				if ( is_integer( $key ) && !$preserve_integer_keys ) {
+				if ( is_integer( $key ) && ! $preserve_integer_keys ) {
 					$output[] = $element;
 				} elseif (
 					isset( $output[ $key ] ) &&

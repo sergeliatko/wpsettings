@@ -11,11 +11,11 @@ namespace SergeLiatko\WPSettings\Traits;
 trait IsEmpty {
 
 	/**
-	 * @param mixed $data
+	 * @param mixed|null $data
 	 *
 	 * @return bool
 	 */
-	protected function isEmpty( $data = null ): bool {
+	protected function isEmpty( mixed $data = null ): bool {
 		return empty( $data );
 	}
 

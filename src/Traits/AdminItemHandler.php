@@ -20,7 +20,7 @@ trait AdminItemHandler {
 	 *
 	 * @return bool
 	 */
-	protected function isNotEmptyArray( $item ): bool {
+	protected function isNotEmptyArray( mixed $item ): bool {
 		return !empty( $item ) && is_array( $item );
 	}
 
@@ -49,7 +49,7 @@ trait AdminItemHandler {
 	 * @param string        $class    Name of the class to create. Must implement the AdminItemInterface.
 	 * @param array         $defaults Array of default parameters to provide for the instance.
 	 *
-	 * @return array|\SergeLiatko\WPSettings\Interfaces\AdminItemInterface[]
+	 * @return array|AdminItemInterface[]
 	 */
 	protected function instantiateItems( array $items, string $class, array $defaults = array() ): array {
 		$items = array_filter( $items, array( $this, 'isNotEmptyArray' ) );

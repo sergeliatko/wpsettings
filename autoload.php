@@ -15,7 +15,7 @@ spl_autoload_register( function ( $class ) {
 		) !== 0
 	) {
 		return;
-	};
+	}
 
 	// try to load the file
 	if ( file_exists(

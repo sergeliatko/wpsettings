@@ -16,19 +16,19 @@ class UI {
 	use AdminItemHandler;
 
 	/**
-	 * @var array|array[]|\SergeLiatko\WPSettings\Page[]
+	 * @var array|array[]|Page[]
 	 */
-	protected $pages;
+	protected array $pages;
 
 	/**
-	 * @var array|array[]|\SergeLiatko\WPSettings\Section[]
+	 * @var array|array[]|Section[]
 	 */
-	protected $sections;
+	protected array $sections;
 
 	/**
-	 * @var array|array[]|\SergeLiatko\WPSettings\Setting[]
+	 * @var array|array[]|Setting[]
 	 */
-	protected $settings;
+	protected array $settings;
 
 	/**
 	 * UI constructor.
@@ -46,14 +46,14 @@ class UI {
 			'pages'    => array(),
 			'sections' => array(),
 			'settings' => array(),
-		) ), EXTR_OVERWRITE );
+		) ) );
 		$this->setPages( $pages );
 		$this->setSections( $sections );
 		$this->setSettings( $settings );
 	}
 
 	/**
-	 * @return array|array[]|\SergeLiatko\WPSettings\Page[]
+	 * @return array|array[]|Page[]
 	 * @noinspection PhpUnused
 	 */
 	public function getPages(): array {
@@ -75,7 +75,7 @@ class UI {
 	}
 
 	/**
-	 * @return array|array[]|\SergeLiatko\WPSettings\Section[]
+	 * @return array|array[]|Section[]
 	 * @noinspection PhpUnused
 	 */
 	public function getSections(): array {
@@ -97,7 +97,7 @@ class UI {
 	}
 
 	/**
-	 * @return array|array[]|\SergeLiatko\WPSettings\Setting[]
+	 * @return array|array[]|Setting[]
 	 * @noinspection PhpUnused
 	 */
 	public function getSettings(): array {

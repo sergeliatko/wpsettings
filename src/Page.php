@@ -3,6 +3,7 @@
 
 namespace SergeLiatko\WPSettings;
 
+use Closure;
 use SergeLiatko\WPSettings\Interfaces\AdminItemInterface;
 use SergeLiatko\WPSettings\Traits\AdminItemHandler;
 use SergeLiatko\WPSettings\Traits\IsCallableOrClosure;
@@ -22,7 +23,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @var string $hook
 	 */
-	protected $hook;
+	protected string $hook;
 
 	/**
 	 * Page slug in WordPress admin.
@@ -31,7 +32,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @var string $slug
 	 */
-	protected $slug;
+	protected string $slug;
 
 	/**
 	 * Page label in admin navigation menu.
@@ -40,7 +41,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @var string $label
 	 */
-	protected $label;
+	protected string $label;
 
 	/**
 	 * Page title in admin area.
@@ -52,7 +53,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @var string $title
 	 */
-	protected $title;
+	protected string $title;
 
 	/**
 	 * Formatted text to display before the setting sections on this page.
@@ -63,7 +64,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @var string $description
 	 */
-	protected $description;
+	protected string $description;
 
 	/**
 	 * Minimum capability required to access this page in the admin.
@@ -74,7 +75,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @var string $capability
 	 */
-	protected $capability;
+	protected string $capability;
 
 	/**
 	 * Parent page slug.
@@ -86,7 +87,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @var string $parent
 	 */
-	protected $parent;
+	protected string $parent;
 
 	/**
 	 * Page position in admin menu.
@@ -98,7 +99,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @var int|null $position
 	 */
-	protected $position;
+	protected ?int $position;
 
 	/**
 	 * The URL to the icon to be used for this menu.
@@ -114,7 +115,7 @@ class Page implements AdminItemInterface {
 	 *
 	 * @var string $icon
 	 */
-	protected $icon;
+	protected string $icon;
 
 	/**
 	 * The function to be called to output the content for this page.
@@ -123,9 +124,9 @@ class Page implements AdminItemInterface {
 	 *
 	 * Represents $function in add_menu_page() and add_submenu_page().
 	 *
-	 * @var \Closure|callable|string|array|null $callback
+	 * @var Closure|callable|string|array|null $callback
 	 */
-	protected $callback;
+	protected $callback = null;
 
 	/**
 	 * Array of setting sections to include in this page.
@@ -134,9 +135,9 @@ class Page implements AdminItemInterface {
 	 *
 	 * @see setSections()
 	 *
-	 * @var array|\SergeLiatko\WPSettings\Section[] $sections
+	 * @var array|Section[]|null $sections
 	 */
-	protected $sections;
+	protected ?array $sections = null;
 
 	/**
 	 * Array of scripts to load on this admin page.
@@ -146,9 +147,9 @@ class Page implements AdminItemInterface {
 	 * If value in this array is a string, it will be used as script handle in wp_enqueue_scripts().
 	 * If value is an associative array, its parts will be used in wp_enqueue_scripts(). See enqueueScripts() for details.
 	 *
-	 * @var string[]|array[]
+	 * @var string[]|array[]|null
 	 */
-	protected $scripts;
+	protected ?array $scripts = null;
 
 	/**
 	 * Page constructor.
@@ -157,19 +158,19 @@ class Page implements AdminItemInterface {
 	 */
 	public function __construct( array $params ) {
 		/**
-		 * @var string           $slug
-		 * @var string           $label
-		 * @var string           $title
-		 * @var string           $description
-		 * @var string           $capability
-		 * @var string           $parent
-		 * @var int|null         $position
-		 * @var string           $icon
-		 * @var callable         $callback
-		 * @var array[]          $sections
+		 * @var string $slug
+		 * @var string $label
+		 * @var string $title
+		 * @var string $description
+		 * @var string $capability
+		 * @var string $parent
+		 * @var int|null $position
+		 * @var string $icon
+		 * @var callable $callback
+		 * @var array[] $sections
 		 * @var string[]|array[] $scripts
 		 */
-		extract( wp_parse_args( $params, $this->getDefaultParameters() ), EXTR_OVERWRITE );
+		extract( wp_parse_args( $params, $this->getDefaultParameters() ) );
 		$this->setSlug( $slug );
 		$this->setLabel( $label );
 		$this->setTitle( $title );
@@ -188,9 +189,9 @@ class Page implements AdminItemInterface {
 	/**
 	 * @param array $params
 	 *
-	 * @return object|\SergeLiatko\WPSettings\Interfaces\AdminItemInterface
+	 * @return Page
 	 */
-	public static function createInstance( array $params ) {
+	public static function createInstance( array $params ): static {
 		return Factory::createItem( $params, __CLASS__ );
 	}
 
@@ -209,9 +210,9 @@ class Page implements AdminItemInterface {
 	 * @return Page
 	 */
 	public function setHook( string $hook = '' ): Page {
-		if ( !empty( $hook ) ) {
+		if ( ! empty( $hook ) ) {
 			//enqueue scripts if needed
-			if ( !$this->isEmpty( $this->getScripts() ) ) {
+			if ( ! $this->isEmpty( $this->getScripts() ) ) {
 				add_action( "load-$hook", array( $this, 'loadScripts' ), 10, 0 );
 			}
 			//display setting errors (and update message) if it is not in admin Settings submenu.
@@ -378,10 +379,10 @@ class Page implements AdminItemInterface {
 	}
 
 	/**
-	 * @return \Closure|callable|string|array
+	 * @return Closure|callable|string|array
 	 */
-	public function getCallback() {
-		if ( !$this->is_callable_or_closure( $this->callback ) ) {
+	public function getCallback(): callable|array|Closure|string {
+		if ( ! $this->is_callable_or_closure( $this->callback ) ) {
 			$this->setCallback( array( $this, 'display' ) );
 		}
 
@@ -389,23 +390,23 @@ class Page implements AdminItemInterface {
 	}
 
 	/**
-	 * @param \Closure|callable|string|array|null $callback
+	 * @param callable|array|string|Closure|null $callback
 	 *
 	 * @return Page
 	 */
-	public function setCallback( $callback ): Page {
+	public function setCallback( callable|array|string|Closure|null $callback ): Page {
 		$this->callback = $this->is_callable_or_closure( $callback ) ? $callback : null;
 
 		return $this;
 	}
 
 	/**
-	 * @return array|\SergeLiatko\WPSettings\Section[]
+	 * @return array|Section[]
 	 * @noinspection PhpUnused
 	 */
 	public function getSections(): array {
-		if ( !is_array( $this->sections ) ) {
-			$this->setSections( array() );
+		if ( ! is_array( $this->sections ) ) {
+			$this->setSections();
 		}
 
 		return $this->sections;
@@ -430,7 +431,7 @@ class Page implements AdminItemInterface {
 	 * @return array[]|string[]
 	 */
 	public function getScripts(): array {
-		if ( !is_array( $this->scripts ) ) {
+		if ( ! is_array( $this->scripts ) ) {
 			$this->setScripts( array() );
 		}
 
@@ -450,7 +451,7 @@ class Page implements AdminItemInterface {
 					$script = null;
 				}
 			} else {
-				if ( !is_string( $script ) || empty( $script ) ) {
+				if ( ! is_string( $script ) || empty( $script ) ) {
 					$script = null;
 				}
 			}
@@ -477,7 +478,7 @@ class Page implements AdminItemInterface {
 	/**
 	 * Displays settings page in WordPress admin.
 	 */
-	public function display() {
+	public function display(): void {
 		$slug = $this->getSlug();
 		/** @noinspection HtmlUnknownTarget */
 		printf(
@@ -486,7 +487,7 @@ class Page implements AdminItemInterface {
 			sprintf( '<h2>%s</h2>', esc_html( get_admin_page_title() ) ),
 			esc_url( admin_url( 'options.php' ) )
 		);
-		if ( !$this->isEmpty( $description = $this->getDescription() ) ) {
+		if ( ! $this->isEmpty( $description = $this->getDescription() ) ) {
 			echo wpautop( $description );
 		}
 		do_action( "before_setting_sections-$slug", $this );
@@ -500,7 +501,7 @@ class Page implements AdminItemInterface {
 	/**
 	 * Registers settings page in WordPress UI.
 	 */
-	public function register() {
+	public function register(): void {
 		$hook = $this->isEmpty( $parent = $this->getParent() ) ?
 			add_menu_page(
 				$this->getTitle(),
@@ -527,14 +528,14 @@ class Page implements AdminItemInterface {
 	/**
 	 * Hooks enqueueScripts() to admin_enqueue_scripts.
 	 */
-	public function loadScripts() {
+	public function loadScripts(): void {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueueScripts' ), 10, 0 );
 	}
 
 	/**
 	 * Enqueues scripts for this page in WordPress admin.
 	 */
-	public function enqueueScripts() {
+	public function enqueueScripts(): void {
 		foreach ( $this->getScripts() as $script ) {
 			if ( is_array( $script ) ) {
 				$handle = $script['handle'];

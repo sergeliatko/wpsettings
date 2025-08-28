@@ -3,6 +3,7 @@
 
 namespace SergeLiatko\WPSettings;
 
+use Closure;
 use SergeLiatko\WPSettings\Interfaces\AdminItemInterface;
 use SergeLiatko\WPSettings\Traits\AdminItemHandler;
 use SergeLiatko\WPSettings\Traits\IsCallableOrClosure;
@@ -20,36 +21,36 @@ class Section implements AdminItemInterface {
 	/**
 	 * @var string $id Section ID. Optional, defaults to 'default'.
 	 */
-	protected $id;
+	protected string $id;
 
 	/**
 	 * @var string Section parent page slug. Optional, defaults to 'general'.
 	 */
-	protected $page;
+	protected string $page;
 
 	/**
 	 * @var string Section title.
 	 */
-	protected $title;
+	protected string $title;
 
 	/**
 	 * @var string Section description text or html code.
 	 *             Optional, defaults to empty string. Will be passed through wpautop($description).
 	 */
-	protected $description;
+	protected string $description;
 
 	/**
-	 * @var \Closure|callable|string|array|null $callback Section display callback function.
+	 * @var Closure|callable|string|array|null $callback Section display callback function.
 	 *                                                    Optional, defaults to \SergeLiatko\WPSettings\Section::display().
 	 */
-	protected $callback;
+	protected $callback = null;
 
 	/**
-	 * @var \SergeLiatko\WPSettings\Setting[] $settings Array of settings to add to this section.
+	 * @var Setting[]|null $settings Array of settings to add to this section.
 	 *                                                  Optional, defaults to empty array.
 	 *                                                  Values must be arrays of parameters for Setting.
 	 */
-	protected $settings;
+	protected ?array $settings = null;
 
 	/**
 	 * Section constructor.
@@ -58,14 +59,14 @@ class Section implements AdminItemInterface {
 	 */
 	public function __construct( array $args = array() ) {
 		/**
-		 * @var string   $id
-		 * @var string   $page
-		 * @var string   $title
-		 * @var string   $description
+		 * @var string $id
+		 * @var string $page
+		 * @var string $title
+		 * @var string $description
 		 * @var callable $callback
-		 * @var array[]  $settings
+		 * @var array[] $settings
 		 */
-		extract( wp_parse_args( $args, $this->getDefaultParameters() ), EXTR_OVERWRITE );
+		extract( wp_parse_args( $args, $this->getDefaultParameters() ) );
 		$this->setId( $id );
 		$this->setPage( $page );
 		$this->setTitle( $title );
@@ -80,9 +81,9 @@ class Section implements AdminItemInterface {
 	/**
 	 * @param array $params
 	 *
-	 * @return object|\SergeLiatko\WPSettings\Interfaces\AdminItemInterface
+	 * @return Section
 	 */
-	public static function createInstance( array $params ) {
+	public static function createInstance( array $params ): static {
 		return Factory::createItem( $params, __CLASS__ );
 	}
 
@@ -166,10 +167,10 @@ class Section implements AdminItemInterface {
 	}
 
 	/**
-	 * @return \Closure|callable|string|array
+	 * @return Closure|callable|string|array
 	 */
-	public function getCallback() {
-		if ( !$this->is_callable_or_closure( $this->callback ) ) {
+	public function getCallback(): callable|array|Closure|string {
+		if ( ! $this->is_callable_or_closure( $this->callback ) ) {
 			$this->setCallback( array( $this, 'display' ) );
 		}
 
@@ -177,23 +178,23 @@ class Section implements AdminItemInterface {
 	}
 
 	/**
-	 * @param \Closure|callable|string|array|null $callback
+	 * @param callable|array|string|Closure|null $callback
 	 *
 	 * @return Section
 	 */
-	public function setCallback( $callback = null ): Section {
+	public function setCallback( callable|array|string|Closure $callback = null ): Section {
 		$this->callback = $this->is_callable_or_closure( $callback ) ? $callback : null;
 
 		return $this;
 	}
 
 	/**
-	 * @return array|\SergeLiatko\WPSettings\Setting[]
+	 * @return array|Setting[]
 	 * @noinspection PhpUnused
 	 */
 	public function getSettings(): array {
-		if ( !is_array( $this->settings ) ) {
-			$this->setSettings( array() );
+		if ( ! is_array( $this->settings ) ) {
+			$this->setSettings();
 		}
 
 		return $this->settings;
@@ -220,9 +221,9 @@ class Section implements AdminItemInterface {
 	/**
 	 * Displays section in WordPress UI.
 	 */
-	public function display() {
+	public function display(): void {
 		do_action( "before_setting_section-{$this->getId()}-{$this->getPage()}", $this );
-		if ( !$this->isEmpty( $description = $this->getDescription() ) ) {
+		if ( ! $this->isEmpty( $description = $this->getDescription() ) ) {
 			echo wpautop( $description );
 		}
 		do_action( "after_setting_section-{$this->getId()}-{$this->getPage()}", $this );
@@ -231,7 +232,7 @@ class Section implements AdminItemInterface {
 	/**
 	 * Registers setting section in WordPress UI.
 	 */
-	public function register() {
+	public function register(): void {
 		add_settings_section(
 			$this->getId(),
 			$this->getTitle(),

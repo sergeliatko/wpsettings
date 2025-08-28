@@ -13,13 +13,13 @@ interface AdminItemInterface {
 	/**
 	 * @return string
 	 */
-	public function getId();
+	public function getId(): string;
 
 	/**
 	 * @param array $params
 	 *
-	 * @return \SergeLiatko\WPSettings\Interfaces\AdminItemInterface
+	 * @return AdminItemInterface
 	 */
-	public static function createInstance( array $params );
+	public static function createInstance( array $params ): AdminItemInterface;
 
 }
