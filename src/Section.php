@@ -57,6 +57,8 @@ class Section implements AdminItemInterface {
 	 * Section constructor.
 	 *
 	 * @param array $args
+	 *
+	 * @throws WP_Exception
 	 */
 	public function __construct( array $args = array() ) {
 		/**
@@ -192,6 +194,7 @@ class Section implements AdminItemInterface {
 	/**
 	 * @return array|Setting[]
 	 * @noinspection PhpUnused
+	 * @throws WP_Exception
 	 */
 	public function getSettings(): array {
 		if ( ! is_array( $this->settings ) ) {
