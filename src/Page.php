@@ -466,6 +466,7 @@ class Page implements AdminItemInterface {
 			'deps'      => array(),
 			'ver'       => false,
 			'in_footer' => false,
+			'strategy'  => '',
 		) );
 		$this->scripts = array_filter( $scripts );
 
@@ -549,7 +550,7 @@ class Page implements AdminItemInterface {
 					$script['src'],
 					$script['deps'],
 					$script['ver'],
-					$script['in_footer']
+					$this->getScriptArgs( $script )
 				);
 				//@developers: hook your wp_localize_script() functions here to localize the enqueued script
 				do_action( "admin_enqueued_script-$handle", $this );
@@ -583,6 +584,24 @@ class Page implements AdminItemInterface {
 			'sections'    => array(),
 			'scripts'     => array(),
 		);
+	}
+
+	/**
+	 * Returns WordPress script args for a settings-page script definition.
+	 *
+	 * @param array $script Script definition.
+	 *
+	 * @return array Script args.
+	 */
+	protected function getScriptArgs( array $script ): array {
+		$args = array(
+			'in_footer' => ! empty( $script['in_footer'] ),
+		);
+		if ( ! empty( $script['strategy'] ) ) {
+			$args['strategy'] = strval( $script['strategy'] );
+		}
+
+		return $args;
 	}
 
 }
